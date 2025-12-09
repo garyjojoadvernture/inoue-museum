@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLAMDUNK卡片展示 - 1997 Cardass Masters</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+        }
+        
+        .card {
+            width: 240px;
+            height: 330px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .card-front {
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-back {
+            background: linear-gradient(145deg, #666, #444);
+            transform: rotateY(180deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            z-index: 1000;
+        }
+        
+        .search-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            background: rgba(255,255,255,0.95);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .language-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #888;
+        }
+        
+        .search-btn {
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #555;
+        }
+        
+        .clear-btn {
+            padding: 10px 15px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .clear-btn:hover {
+            background: #888;
+        }
+        
+        .language-selector {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .language-selector:focus {
+            border-color: #888;
+        }
+        
+        .card-tags {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            z-index: 10;
+        }
+        
+        .card-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 11;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tag {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .zoom-icon {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 12;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+        
+        .zoom-icon:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .zoom-icon::before {
+            content: "🔍";
+            font-size: 16px;
+        }
+        
+        .card.hidden {
+            display: none;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 600px;
+            max-height: 90vh;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-card {
+            width: 480px;
+            height: 660px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .modal-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .modal-card.flipped .modal-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .modal-card-front, .modal-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-card-front {
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-card-back {
+            background: #f0f0f0;
+            transform: rotateY(180deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+            transition: background 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: white;
+        }
+        
+        .modal-close::before {
+            content: "✕";
+        }
+        
+        .modal-image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        .modal-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
+        }
+        
+        .modal-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-size: 20px;
+            padding: 40px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">加载卡片中...</div>
+    
+    <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="输入tag搜索卡片...">
+        <button class="search-btn" onclick="searchCards()">搜索</button>
+        <button class="clear-btn" onclick="clearSearch()">清除</button>
+    </div>
+    
+    <div class="language-container">
+        <select class="language-selector" id="languageSelector" onchange="changeLanguage()">
+            <option value="zh">中文</option>
+            <option value="en">EN</option>
+            <option value="ja">日本語</option>
+        </select>
+    </div>
+    
+    <div style="margin-top: 100px;">
+        <div class="cards-container" id="cardsContainer">
+            <!-- 卡片将通过JavaScript动态生成 -->
+        </div>
+        <div class="no-results" id="noResults" style="display: none;">
+            没有找到匹配的卡片
+        </div>
+    </div>
+    
+    <!-- 放大显示模态框 -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()"></div>
+            <div class="modal-card" id="modalCard">
+                <!-- 模态框卡片内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 卡片总数 - 根据实际图片数量调整
+        const TOTAL_CARDS = 140;
+        
+        // 多语言文本
+        const translations = {
+            zh: {
+                searchPlaceholder: "输入tag搜索卡片...",
+                searchBtn: "搜索",
+                clearBtn: "清除",
+                loading: "加载卡片中...",
+                noResults: "没有找到匹配的卡片",
+                cardFront: "正面",
+                cardBack: "背面",
+                imageError: "无法加载卡片"
+            },
+            en: {
+                searchPlaceholder: "Search cards by tag...",
+                searchBtn: "Search",
+                clearBtn: "Clear",
+                loading: "Loading cards...",
+                noResults: "No matching cards found",
+                cardFront: "Front",
+                cardBack: "Back",
+                imageError: "Unable to load card"
+            },
+            ja: {
+                searchPlaceholder: "タグでカードを検索...",
+                searchBtn: "検索",
+                clearBtn: "クリア",
+                loading: "カードを読み込み中...",
+                noResults: "一致するカードが見つかりません",
+                cardFront: "表",
+                cardBack: "裏",
+                imageError: "カードを読み込めません"
+            }
+        };
+        
+        // 当前语言
+        let currentLanguage = 'zh';
+        
+        // 卡片tag数据（多语言）
+        const cardTags = {
+            zh: {
+                1: ["主角", "樱木花道"],
+                2: ["主角", "流川枫"],
+                3: ["主角", "赤木刚宪"],
+                4: ["主角", "宫城良田"],
+                5: ["主角", "三井寿"],
+                6: ["湘北", "队长"],
+                7: ["湘北", "得分手"],
+                8: ["湘北", "控球后卫"],
+                9: ["湘北", "三分射手"],
+                10: ["湘北", "篮板王"],
+                11: ["海南", "牧绅一"],
+                12: ["海南", "神宗一郎"],
+                13: ["海南", "清田信长"],
+                14: ["海南", "高砂一马"],
+                15: ["海南", "武藤正"],
+                16: ["翔阳", "藤真健司"],
+                17: ["翔阳", "花形透"],
+                18: ["翔阳", "永野满"],
+                19: ["翔阳", "长谷川一志"],
+                20: ["翔阳", "伊藤卓"],
+                21: ["陵南", "仙道彰"],
+                22: ["陵南", "鱼住纯"],
+                23: ["陵南", "福田吉兆"],
+                24: ["陵南", "越野宏明"],
+                25: ["陵南", "池上亮二"],
+                26: ["丰玉", "南烈"],
+                27: ["丰玉", "岸本实理"],
+                28: ["丰玉", "板仓大二郎"],
+                29: ["丰玉", "矢嶋京平"],
+                30: ["丰玉", "岩田三秋"],
+                31: ["山王", "河田雅史"],
+                32: ["山王", "泽北荣治"],
+                33: ["山王", "野边将宏"],
+                34: ["山王", "松本稔"],
+                35: ["山王", "深津一成"],
+                36: ["教练", "安西光义"],
+                37: ["教练", "高头力"],
+                38: ["教练", "田冈茂一"],
+                39: ["教练", "堂本五郎"],
+                40: ["教练", "相田彦一"],
+                41: ["经理", "赤木晴子"],
+                42: ["经理", "松井稔"],
+                43: ["经理", "岛村叶子"],
+                44: ["经理", "小暮"],
+                45: ["经理", "篮球队经理"],
+                46: ["友情", "团队"],
+                47: ["友情", "努力"],
+                48: ["友情", "成长"],
+                49: ["友情", "青春"],
+                50: ["友情", "梦想"],
+                51: ["比赛", "练习赛"],
+                52: ["比赛", "县大会"],
+                53: ["比赛", "全国大赛"],
+                54: ["比赛", "决赛"],
+                55: ["比赛", "关键时刻"],
+                56: ["技术", "灌篮"],
+                57: ["技术", "三分球"],
+                58: ["技术", "盖帽"],
+                59: ["技术", "抢断"],
+                60: ["技术", "运球"],
+                61: ["回忆", "训练"],
+                62: ["回忆", "休息室"],
+                63: ["回忆", "比赛日"],
+                64: ["回忆", "庆祝"],
+                65: ["回忆", "挑战"],
+                66: ["经典", "台词"],
+                67: ["经典", "场景"],
+                68: ["经典", "瞬间"],
+                69: ["经典", "对决"],
+                70: ["经典", "逆袭"],
+                71: ["特殊", "稀有"],
+                72: ["特殊", "限量"],
+                73: ["特殊", "签名"],
+                74: ["特殊", "珍藏"],
+                75: ["特殊", "黄金"]
+            },
+            en: {
+                1: ["Protagonist", "Hanamichi"],
+                2: ["Protagonist", "Kaede"],
+                3: ["Protagonist", "Takenori"],
+                4: ["Protagonist", "Mitsui"],
+                5: ["Protagonist", "Ryota"],
+                6: ["Shohoku", "Captain"],
+                7: ["Shohoku", "Scorer"],
+                8: ["Shohoku", "PointGuard"],
+                9: ["Shohoku", "Shooter"],
+                10: ["Shohoku", "Rebounder"],
+                11: ["Ryozan", "Akira"],
+                12: ["Ryozan", "Kenji"],
+                13: ["Ryozan", "Sinji"],
+                14: ["Ryozan", "Kazuma"],
+                15: ["Ryozan", "Tadashi"],
+                16: ["Shoyo", "Kenji"],
+                17: ["Shoyo", "Toru"],
+                18: ["Shoyo", "Mitsuru"],
+                19: ["Shoyo", "Kazushi"],
+                20: ["Shoyo", "Suguru"],
+                21: ["Ryonan", "Toru"],
+                22: ["Ryonan", "Jun"],
+                23: ["Ryonan", "Kiyoshi"],
+                24: ["Ryonan", "Hiroaki"],
+                25: ["Ryonan", "Ryoji"],
+                26: ["Toyotama", "Akira"],
+                27: ["Toyotama", "Masaharu"],
+                28: ["Toyotama", "Daijiro"],
+                29: ["Toyotama", "Kyosuke"],
+                30: ["Toyotama", "Mikihisa"],
+                31: ["Sannoh", "Masashi"],
+                32: ["Sannoh", "Eiji"],
+                33: ["Sannoh", "Masahiro"],
+                34: ["Sannoh", "Minoru"],
+                35: ["Sannoh", "Kazunari"],
+                36: ["Coach", "Anzai"],
+                37: ["Coach", "Takashi"],
+                38: ["Coach", "Moichi"],
+                39: ["Coach", "Goro"],
+                40: ["Coach", "Hikoichi"],
+                41: ["Manager", "Haruko"],
+                42: ["Manager", "Minoru"],
+                43: ["Manager", "Yoko"],
+                44: ["Manager", "Kogure"],
+                45: ["Manager", "TeamManager"],
+                46: ["Friendship", "Team"],
+                47: ["Friendship", "Effort"],
+                48: ["Friendship", "Growth"],
+                49: ["Friendship", "Youth"],
+                50: ["Friendship", "Dream"],
+                51: ["Match", "Practice"],
+                52: ["Match", "Prefectural"],
+                53: ["Match", "National"],
+                54: ["Match", "Final"],
+                55: ["Match", "Critical"],
+                56: ["Skill", "Dunk"],
+                57: ["Skill", "ThreePoint"],
+                58: ["Skill", "Block"],
+                59: ["Skill", "Steal"],
+                60: ["Skill", "Dribble"],
+                61: ["Memory", "Training"],
+                62: ["Memory", "LockerRoom"],
+                63: ["Memory", "GameDay"],
+                64: ["Memory", "Celebration"],
+                65: ["Memory", "Challenge"],
+                66: ["Classic", "Line"],
+                67: ["Classic", "Scene"],
+                68: ["Classic", "Moment"],
+                69: ["Classic", "Duel"],
+                70: ["Classic", "Comeback"],
+                71: ["Special", "Rare"],
+                72: ["Special", "Limited"],
+                73: ["Special", "Autograph"],
+                74: ["Special", "Collection"],
+                75: ["Special", "Gold"]
+            },
+            ja: {
+                1: ["主人公", "桜木花道"],
+                2: ["主人公", "流川楓"],
+                3: ["主人公", "赤木剛憲"],
+                4: ["主人公", "宮城リョータ"],
+                5: ["主人公", "三井寿"],
+                6: ["湘北", "主将"],
+                7: ["湘北", "得点屋"],
+                8: ["湘北", "ポイントガード"],
+                9: ["湘北", "シューター"],
+                10: ["湘北", "リバウンダー"],
+                11: ["海南", "牧紳一"],
+                12: ["海南", "神宗一郎"],
+                13: ["海南", "清田信長"],
+                14: ["海南", "高砂一馬"],
+                15: ["海南", "武藤正"],
+                16: ["翔陽", "藤真健司"],
+                17: ["翔陽", "花形透"],
+                18: ["翔陽", "永野満"],
+                19: ["翔陽", "長谷川一志"],
+                20: ["翔陽", "伊藤卓"],
+                21: ["陵南", "仙道彰"],
+                22: ["陵南", "魚住純"],
+                23: ["陵南", "福田吉兆"],
+                24: ["陵南", "越野宏明"],
+                25: ["陵南", "池上亮二"],
+                26: ["豊玉", "南烈"],
+                27: ["豊玉", "岸本実理"],
+                28: ["豊玉", "板倉大二郎"],
+                29: ["豊玉", "矢嶋京平"],
+                30: ["豊玉", "岩田三秋"],
+                31: ["山王", "河田雅史"],
+                32: ["山王", "沢北栄治"],
+                33: ["山王", "野辺将宏"],
+                34: ["山王", "松本稔"],
+                35: ["山王", "深津一成"],
+                36: ["監督", "安西光義"],
+                37: ["監督", "高頭力"],
+                38: ["監督", "田岡茂一"],
+                39: ["監督", "堂本五郎"],
+                40: ["監督", "相田彦一"],
+                41: ["マネージャー", "赤木晴子"],
+                42: ["マネージャー", "松井稔"],
+                43: ["マネージャー", "島村葉子"],
+                44: ["マネージャー", "木暮"],
+                45: ["マネージャー", "バスケ部マネージャー"],
+                46: ["友情", "チーム"],
+                47: ["友情", "努力"],
+                48: ["友情", "成長"],
+                49: ["友情", "青春"],
+                50: ["友情", "夢"],
+                51: ["試合", "練習試合"],
+                52: ["試合", "県大会"],
+                53: ["試合", "全国大会"],
+                54: ["試合", "決勝"],
+                55: ["試合", "重要場面"],
+                56: ["技術", "ダンク"],
+                57: ["技術", "スリーポイント"],
+                58: ["技術", "ブロック"],
+                59: ["技術", "スティール"],
+                60: ["技術", "ドリブル"],
+                61: ["思い出", "練習"],
+                62: ["思い出", "ロッカールーム"],
+                63: ["思い出", "試合日"],
+                64: ["思い出", "祝賀"],
+                65: ["思い出", "挑戦"],
+                66: ["名場面", "セリフ"],
+                67: ["名場面", "シーン"],
+                68: ["名場面", "瞬間"],
+                69: ["名場面", "対決"],
+                70: ["名場面", "逆転"],
+                71: ["特殊", "レア"],
+                72: ["特殊", "限定"],
+                73: ["特殊", "サイン"],
+                74: ["特殊", "コレクション"],
+                75: ["特殊", "ゴールド"]
+            }
+        };
+        
+        // 生成默认tags（对于没有定义的卡片）
+        function generateDefaultTags(cardNumber, lang) {
+            const tags = [];
+            const tagMap = {
+                zh: ["湘北", "海南", "翔阳", "陵南", "丰玉", "山王", "教练", "经理", "友情", "比赛", "技术", "回忆", "经典", "特殊", "其他"],
+                en: ["Shohoku", "Ryozan", "Shoyo", "Ryonan", "Toyotama", "Sannoh", "Coach", "Manager", "Friendship", "Match", "Skill", "Memory", "Classic", "Special", "Other"],
+                ja: ["湘北", "海南", "翔陽", "陵南", "豊玉", "山王", "監督", "マネージャー", "友情", "試合", "技術", "思い出", "名場面", "特殊", "その他"]
+            };
+            
+            const limitedMap = {
+                zh: ["限量", "珍藏"],
+                en: ["Limited", "Collection"],
+                ja: ["限定", "コレクション"]
+            };
+            
+            if (cardNumber <= 10) tags.push(tagMap[lang][0]);
+            else if (cardNumber <= 15) tags.push(tagMap[lang][1]);
+            else if (cardNumber <= 20) tags.push(tagMap[lang][2]);
+            else if (cardNumber <= 25) tags.push(tagMap[lang][3]);
+            else if (cardNumber <= 30) tags.push(tagMap[lang][4]);
+            else if (cardNumber <= 35) tags.push(tagMap[lang][5]);
+            else if (cardNumber <= 40) tags.push(tagMap[lang][6]);
+            else if (cardNumber <= 45) tags.push(tagMap[lang][7]);
+            else if (cardNumber <= 50) tags.push(tagMap[lang][8]);
+            else if (cardNumber <= 55) tags.push(tagMap[lang][9]);
+            else if (cardNumber <= 60) tags.push(tagMap[lang][10]);
+            else if (cardNumber <= 65) tags.push(tagMap[lang][11]);
+            else if (cardNumber <= 70) tags.push(tagMap[lang][12]);
+            else if (cardNumber <= 75) tags.push(tagMap[lang][13]);
+            else tags.push(tagMap[lang][14]);
+            
+            if (cardNumber % 5 === 0) tags.push(limitedMap[lang][0]);
+            if (cardNumber % 10 === 0) tags.push(limitedMap[lang][1]);
+            
+            return tags;
+        }
+        
+        // 获取卡片tags
+        function getCardTags(cardNumber) {
+            return cardTags[currentLanguage][cardNumber] || generateDefaultTags(cardNumber, currentLanguage);
+        }
+        
+        // 语言切换函数
+        function changeLanguage() {
+            const selector = document.getElementById('languageSelector');
+            currentLanguage = selector.value;
+            
+            // 更新界面文本
+            const t = translations[currentLanguage];
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.querySelector('.search-btn').textContent = t.searchBtn;
+            document.querySelector('.clear-btn').textContent = t.clearBtn;
+            document.getElementById('noResults').textContent = t.noResults;
+            
+            // 重新生成卡片
+            regenerateCards();
+        }
+        
+        // 重新生成卡片
+        function regenerateCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            generateCards();
+        }
+        
+        // 生成卡片
+        async function generateCards() {
+            const container = document.getElementById('cardsContainer');
+            const loadingElement = document.getElementById('loading');
+            
+            try {
+                // 创建250张卡片
+                for (let i = 1; i <= TOTAL_CARDS; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.setAttribute('data-tags', getCardTags(i).join(','));
+                    card.setAttribute('data-card-number', i);
+                    
+                    // 构建图片路径
+                    const frontImagePath = `images/card/1997CardassMasters/${i}_A.jpg`;
+                    const backImagePath = `images/card/1997CardassMasters/${i}_B.jpg`;
+                    
+                    // 为每张卡片添加唯一时间戳防止缓存
+                    const timestamp = Date.now() + i;
+                    
+                    // 生成tag HTML
+                    const tags = getCardTags(i);
+                    const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                    
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <img src="${frontImagePath}?t=${timestamp}" alt="卡片${i}正面" loading="lazy" onerror="handleImageError(this, ${i}, 'A')">
+                                <div class="card-number">${i}</div>
+                                <div class="card-tags">${tagHtml}</div>
+                                <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                            </div>
+                            <div class="card-back">
+                                <img src="${backImagePath}?t=${timestamp}" alt="卡片${i}背面" loading="lazy" onerror="handleImageError(this, ${i}, 'B')">
+                                <div class="card-number">${i}</div>
+                                <div class="card-tags">${tagHtml}</div>
+                                <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 添加点击事件
+                    card.addEventListener('click', function() {
+                        this.classList.toggle('flipped');
+                    });
+                    
+                    container.appendChild(card);
+                }
+                
+                // 模拟加载延迟，实际使用时可以移除
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+            } catch (error) {
+                console.error('加载卡片时出错:', error);
+            } finally {
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        // 图片加载错误处理
+        function handleImageError(imgElement, cardNumber, side) {
+            const t = translations[currentLanguage];
+            console.warn(`${t.imageError} ${cardNumber}_${side}.jpg`);
+            
+            // 尝试加载默认图片
+            const defaultImagePath = 'images/card/1997CardassMasters/default.png';
+            const defaultImg = new Image();
+            
+            defaultImg.onload = function() {
+                // 默认图片加载成功，替换出错图片
+                imgElement.src = defaultImagePath;
+                imgElement.alt = `默认${side === 'A' ? t.cardFront : t.cardBack}`;
+                
+                // 如果是背面图片缺失，添加一个背面标识
+                if (side === 'B') {
+                    const backIndicator = document.createElement('div');
+                    backIndicator.style.position = 'absolute';
+                    backIndicator.style.top = '10px';
+                    backIndicator.style.left = '10px';
+                    backIndicator.style.background = 'rgba(255,255,255,0.9)';
+                    backIndicator.style.color = '#ff4757';
+                    backIndicator.style.padding = '5px 10px';
+                    backIndicator.style.borderRadius = '15px';
+                    backIndicator.style.fontSize = '12px';
+                    backIndicator.style.fontWeight = 'bold';
+                    backIndicator.style.zIndex = '13';
+                    backIndicator.textContent = '默认背面';
+                    
+                    imgElement.parentNode.appendChild(backIndicator);
+                }
+            };
+            
+            defaultImg.onerror = function() {
+                // 默认图片也加载失败，显示错误提示
+                const placeholder = document.createElement('div');
+                placeholder.style.width = '100%';
+                placeholder.style.height = '100%';
+                placeholder.style.display = 'flex';
+                placeholder.style.justifyContent = 'center';
+                placeholder.style.alignItems = 'center';
+                placeholder.style.backgroundColor = side === 'A' ? '#2c3e50' : '#ff4757';
+                placeholder.style.color = 'white';
+                placeholder.style.fontSize = '24px';
+                placeholder.style.fontWeight = 'bold';
+                
+                const sideText = side === 'A' ? t.cardFront : t.cardBack;
+                placeholder.textContent = `${t.imageError} ${cardNumber} ${sideText}`;
+                
+                // 替换出错图片
+                imgElement.parentNode.replaceChild(placeholder, imgElement);
+            };
+            
+            // 尝试加载默认图片
+            defaultImg.src = defaultImagePath;
+        }
+        
+        // 搜索卡片
+        function searchCards() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card');
+            const noResults = document.getElementById('noResults');
+            
+            if (searchTerm === '') {
+                clearSearch();
+                return;
+            }
+            
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const tags = card.getAttribute('data-tags').toLowerCase();
+                const cardNumber = card.getAttribute('data-card-number');
+                
+                // 检查是否匹配tag或卡号
+                const matchesTag = tags.includes(searchTerm);
+                const matchesNumber = cardNumber.includes(searchTerm);
+                
+                if (matchesTag || matchesNumber) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            // 显示/隐藏无结果提示
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+        
+        // 清除搜索
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const cards = document.querySelectorAll('.card');
+            const noResults = document.getElementById('noResults');
+            
+            searchInput.value = '';
+            cards.forEach(card => {
+                card.classList.remove('hidden');
+            });
+            noResults.style.display = 'none';
+        }
+        
+        // 缩放状态
+        let scale = 1;
+        let lastDistance = 0;
+        let isZooming = false;
+        
+        // 打开模态框
+        function openModal(cardNumber, event) {
+            event.stopPropagation(); // 阻止事件冒泡，避免触发卡片翻转
+            
+            const modal = document.getElementById('cardModal');
+            const modalCard = document.getElementById('modalCard');
+            const tags = getCardTags(cardNumber);
+            const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            const frontImagePath = `images/card/1997CardassMasters/${cardNumber}_A.jpg`;
+            const backImagePath = `images/card/1997CardassMasters/${cardNumber}_B.jpg`;
+            
+            // 为模态框图片添加时间戳
+            const modalTimestamp = Date.now() + cardNumber;
+            
+            modalCard.innerHTML = `
+                <div class="modal-card-inner">
+                    <div class="modal-card-front">
+                        <div class="modal-image-container">
+                            <div class="modal-image-wrapper">
+                                <img src="${frontImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}正面" loading="lazy" onerror="handleModalImageError(this, ${cardNumber}, 'A')">
+                            </div>
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                    </div>
+                    <div class="modal-card-back">
+                        <div class="modal-image-container">
+                            <div class="modal-image-wrapper">
+                                <img src="${backImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}背面" loading="lazy" onerror="handleModalImageError(this, ${cardNumber}, 'B')">
+                            </div>
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                    </div>
+                </div>
+            `;
+            
+            // 重置缩放状态
+            scale = 1;
+            lastDistance = 0;
+            isZooming = false;
+            
+            // 添加翻转事件
+            modalCard.addEventListener('click', function() {
+                this.classList.toggle('flipped');
+            });
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+            
+            // 设置缩放事件监听
+            setupZoomListeners();
+        }
+        
+        // 设置缩放事件监听器
+        function setupZoomListeners() {
+            const imageContainers = document.querySelectorAll('.modal-image-container');
+            
+            imageContainers.forEach(container => {
+                const wrapper = container.querySelector('.modal-image-wrapper');
+                
+                // 触摸开始
+                container.addEventListener('touchstart', handleTouchStart, { passive: false });
+                
+                // 触摸移动
+                container.addEventListener('touchmove', handleTouchMove, { passive: false });
+                
+                // 触摸结束
+                container.addEventListener('touchend', handleTouchEnd, { passive: false });
+                
+                // 鼠标滚轮缩放
+                container.addEventListener('wheel', handleWheel, { passive: false });
+                
+                // 双击重置缩放
+                container.addEventListener('dblclick', resetZoom);
+            });
+        }
+        
+        // 处理触摸开始
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                isZooming = true;
+                lastDistance = getDistance(e.touches[0], e.touches[1]);
+            }
+        }
+        
+        // 处理触摸移动
+        function handleTouchMove(e) {
+            if (e.touches.length === 2 && isZooming) {
+                e.preventDefault();
+                
+                const currentDistance = getDistance(e.touches[0], e.touches[1]);
+                const scaleDelta = currentDistance / lastDistance;
+                
+                scale = Math.min(Math.max(scale * scaleDelta, 1), 5); // 限制缩放范围 1-5
+                lastDistance = currentDistance;
+                
+                applyZoom(e.currentTarget);
+            }
+        }
+        
+        // 处理触摸结束
+        function handleTouchEnd(e) {
+            isZooming = false;
+        }
+        
+        // 处理鼠标滚轮
+        function handleWheel(e) {
+            e.preventDefault();
+            
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            scale = Math.min(Math.max(scale * delta, 1), 5); // 限制缩放范围 1-5
+            
+            applyZoom(e.currentTarget);
+        }
+        
+        // 应用缩放
+        function applyZoom(container) {
+            const wrapper = container.querySelector('.modal-image-wrapper');
+            wrapper.style.transform = `scale(${scale})`;
+        }
+        
+        // 重置缩放
+        function resetZoom(e) {
+            scale = 1;
+            applyZoom(e.currentTarget);
+        }
+        
+        // 计算两点距离
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.getElementById('cardModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // 恢复滚动
+            
+            // 重置缩放状态
+            scale = 1;
+            lastDistance = 0;
+            isZooming = false;
+        }
+        
+        // 点击模态框背景关闭
+        document.getElementById('cardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // 模态框图片错误处理
+        function handleModalImageError(imgElement, cardNumber, side) {
+            const t = translations[currentLanguage];
+            console.warn(`${t.imageError} ${cardNumber}_${side}.jpg`);
+            
+            // 尝试加载默认图片
+            const defaultImagePath = 'images/card/1997CardassMasters/default.png';
+            const defaultImg = new Image();
+            
+            defaultImg.onload = function() {
+                // 默认图片加载成功，替换出错图片
+                imgElement.src = defaultImagePath;
+                imgElement.alt = `默认${side === 'A' ? t.cardFront : t.cardBack}`;
+                
+                // 如果是背面图片缺失，添加一个背面标识
+                if (side === 'B') {
+                    const backIndicator = document.createElement('div');
+                    backIndicator.style.position = 'absolute';
+                    backIndicator.style.top = '10px';
+                    backIndicator.style.left = '10px';
+                    backIndicator.style.background = 'rgba(255,255,255,0.9)';
+                    backIndicator.style.color = '#ff4757';
+                    backIndicator.style.padding = '5px 10px';
+                    backIndicator.style.borderRadius = '15px';
+                    backIndicator.style.fontSize = '12px';
+                    backIndicator.style.fontWeight = 'bold';
+                    backIndicator.style.zIndex = '13';
+                    backIndicator.textContent = '默认背面';
+                    
+                    imgElement.parentNode.appendChild(backIndicator);
+                }
+            };
+            
+            defaultImg.onerror = function() {
+                // 默认图片也加载失败，显示错误提示
+                const placeholder = document.createElement('div');
+                placeholder.style.width = '100%';
+                placeholder.style.height = '100%';
+                placeholder.style.display = 'flex';
+                placeholder.style.justifyContent = 'center';
+                placeholder.style.alignItems = 'center';
+                placeholder.style.backgroundColor = side === 'A' ? '#2c3e50' : '#ff4757';
+                placeholder.style.color = 'white';
+                placeholder.style.fontSize = '36px';
+                placeholder.style.fontWeight = 'bold';
+                
+                const sideText = side === 'A' ? t.cardFront : t.cardBack;
+                placeholder.textContent = `${t.imageError} ${cardNumber} ${sideText}`;
+                
+                imgElement.parentNode.replaceChild(placeholder, imgElement);
+            };
+            
+            // 尝试加载默认图片
+            defaultImg.src = defaultImagePath;
+        }
+        
+        // 回车键搜索
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCards();
+            
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchCards();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

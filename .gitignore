@@ -1,0 +1,25 @@
+# Git ignore file for SLAMDUNK card gallery
+
+# Large image files (consider using external CDN)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+!images/card/1997CardassMasters/default.png
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp

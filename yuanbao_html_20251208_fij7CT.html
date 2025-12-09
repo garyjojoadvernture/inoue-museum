@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLAMDUNK激斗卡收藏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3a 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-bottom: 3px solid #ff4757;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #ff4757;
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background: #ff3742;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+        
+        .counter {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .card {
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-front {
+            background: linear-gradient(145deg, #2c3e50, #1a1a2e);
+            border: 2px solid #ff4757;
+            color: white;
+            padding: 15px;
+        }
+        
+        .card-back {
+            background: linear-gradient(145deg, #ff4757, #ff3742);
+            color: white;
+            transform: rotateY(180deg);
+            padding: 15px;
+        }
+        
+        .card-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .card-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-align: center;
+        }
+        
+        .card-back .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .card-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .instructions {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-basketball-ball"></i> SLAMDUNK 激斗卡收藏</h1>
+            <p class="subtitle">收集您最喜爱的SLAMDUNK角色卡片，点击卡片翻转查看详细信息。全套100张稀有卡片等你来收集！</p>
+            
+            <div class="controls">
+                <button id="flip-all">
+                    <i class="fas fa-sync-alt"></i> 翻转所有卡片
+                </button>
+                <button id="reset">
+                    <i class="fas fa-redo"></i> 重置所有卡片
+                </button>
+                <div class="counter">
+                    已翻转: <span id="flipped-count">0</span> / 100
+                </div>
+            </div>
+        </header>
+        
+        <div class="instructions">
+            <p><i class="fas fa-info-circle"></i> 点击任意卡片可以查看其背面信息。使用上方按钮可以一次性翻转或重置所有卡片。</p>
+        </div>
+        
+        <div class="cards-grid" id="cards-container">
+            <!-- 卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <footer>
+            <p>SLAMDUNK 激斗卡收藏 &copy; 2023 | 本页面仅为展示效果，非商业用途</p>
+        </footer>
+    </div>
+
+    <script>
+        // SLAMDUNK角色数据
+        const slamdunkCharacters = [
+            "樱木花道", "流川枫", "赤木刚宪", "宫城良田", "三井寿",
+            "仙道彰", "鱼住纯", "藤真健司", "花形透", "牧绅一",
+            "清田信长", "神宗一郎", "福田吉兆", "越野宏明", "池上亮二",
+            "宫益义范", "高砂一马", "武藤正", "长谷川一志", "岸本实理",
+            "南烈", "板仓大二郎", "矢崤京平", "岩田三秋", "土屋淳",
+            "诸星大", "森重宽", "御子柴", "深津一成", "泽北荣治",
+            "河田雅史", "松本稔", "野边将广", "一之仓聪", "堂本五郎",
+            "河田美纪男", "相田彦一", "藤井让", "佐佐冈智", "桑田登纪",
+            "安田靖春", "潮崎哲士", "角田悟", "石井健太郎", "佐佐木",
+            "堀田德男", "桑田", "今中", "西尾", "中村"
+        ];
+
+        // 卡片类型
+        const cardTypes = ["普通卡", "稀有卡", "史诗卡", "传奇卡"];
+        
+        // 卡片属性
+        const attributes = ["力量", "速度", "技巧", "耐力", "投篮", "防守"];
+        
+        // 生成100张卡片数据
+        function generateCardData() {
+            const cards = [];
+            
+            for (let i = 0; i < 100; i++) {
+                const charIndex = i % slamdunkCharacters.length;
+                const cardType = cardTypes[Math.min(Math.floor(i / 25), cardTypes.length - 1)];
+                
+                // 为每张卡生成随机属性值
+                const stats = {};
+                attributes.forEach(attr => {
+                    // 根据卡片类型调整属性值范围
+                    let min = 60, max = 90;
+                    if (cardType === "稀有卡") { min = 70; max = 92; }
+                    if (cardType === "史诗卡") { min = 80; max = 96; }
+                    if (cardType === "传奇卡") { min = 85; max = 99; }
+                    
+                    stats[attr] = Math.floor(Math.random() * (max - min + 1)) + min;
+                });
+                
+                cards.push({
+                    id: i + 1,
+                    name: slamdunkCharacters[charIndex],
+                    type: cardType,
+                    stats: stats,
+                    description: `来自《SLAMDUNK》的${cardType}，描绘了角色${slamdunkCharacters[charIndex]}的精彩瞬间。`,
+                    // 根据卡片类型设置颜色
+                    color: cardType === "普通卡" ? "#3498db" : 
+                           cardType === "稀有卡" ? "#9b59b6" : 
+                           cardType === "史诗卡" ? "#e74c3c" : "#f1c40f"
+                });
+            }
+            
+            return cards;
+        }
+        
+        // 卡片数据
+        const cardsData = generateCardData();
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardsContainer = document.getElementById('cards-container');
+            const flipAllBtn = document.getElementById('flip-all');
+            const resetBtn = document.getElementById('reset');
+            const flippedCountElement = document.getElementById('flipped-count');
+            
+            let flippedCards = 0;
+            
+            // 生成卡片
+            cardsData.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.dataset.id = card.id;
+                
+                // 随机选择一个图标
+                const icons = ['fas fa-basketball-ball', 'fas fa-user', 'fas fa-crown', 'fas fa-star', 'fas fa-trophy', 'fas fa-medal'];
+                const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+                
+                // 生成属性HTML
+                let statsHTML = '';
+                for (const [key, value] of Object.entries(card.stats)) {
+                    statsHTML += `
+                        <div class="stat">
+                            <div class="stat-value">${value}</div>
+                            <div class="stat-label">${key}</div>
+                        </div>
+                    `;
+                }
+                
+                cardElement.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-number">${card.id}</div>
+                            <div class="card-icon">
+                                <i class="${randomIcon}"></i>
+                            </div>
+                            <div class="card-title">${card.name}</div>
+                            <div class="card-subtitle">${card.type}</div>
+                        </div>
+                        <div class="card-back" style="background: linear-gradient(145deg, ${card.color}, ${adjustColor(card.color, -20)});">
+                            <div class="card-number">${card.id}</div>
+                            <div class="card-title">${card.name}</div>
+                            <div class="card-subtitle">${card.type}</div>
+                            <p style="margin: 10px 0; font-size: 0.9rem; text-align: center;">${card.description}</p>
+                            <div class="card-stats">
+                                ${statsHTML}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加点击事件
+                cardElement.addEventListener('click', function() {
+                    this.classList.toggle('flipped');
+                    
+                    // 更新翻转计数
+                    flippedCards = document.querySelectorAll('.card.flipped').length;
+                    flippedCountElement.textContent = flippedCards;
+                });
+                
+                cardsContainer.appendChild(cardElement);
+            });
+            
+            // 翻转所有卡片
+            flipAllBtn.addEventListener('click', function() {
+                const allCards = document.querySelectorAll('.card');
+                allCards.forEach(card => {
+                    card.classList.add('flipped');
+                });
+                flippedCards = allCards.length;
+                flippedCountElement.textContent = flippedCards;
+            });
+            
+            // 重置所有卡片
+            resetBtn.addEventListener('click', function() {
+                const allCards = document.querySelectorAll('.card');
+                allCards.forEach(card => {
+                    card.classList.remove('flipped');
+                });
+                flippedCards = 0;
+                flippedCountElement.textContent = flippedCards;
+            });
+        });
+        
+        // 调整颜色亮度的辅助函数
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+    </script>
+</body>
+</html>
