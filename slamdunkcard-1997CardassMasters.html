@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>SLAMDUNK卡片展示 - 1997 Cardass Masters</title>
     <style>
         * {
@@ -106,15 +109,22 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 999;
-            background: rgba(255,255,255,0.95);
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            background: white;
+            padding: 8px;
+            border-radius: 24px;
+            border: 1px solid #dfe1e5;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             max-width: 500px;
             width: 90%;
+            box-shadow: none;
+            transition: all 0.1s;
+        }
+        
+        .search-container:hover {
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            border-color: rgba(223,225,229,0);
         }
         
         .language-container {
@@ -126,62 +136,71 @@
         
         .search-input {
             flex: 1;
-            padding: 10px 15px;
-            border: 2px solid #ddd;
-            border-radius: 25px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 20px;
             font-size: 16px;
             outline: none;
-            transition: border-color 0.3s;
+            background: transparent;
         }
         
         .search-input:focus {
-            border-color: #888;
+            outline: none;
         }
         
-        .search-btn {
-            padding: 10px 20px;
-            background: #333;
-            color: white;
+        .search-btn, .clear-btn {
+            padding: 10px 16px;
+            background: #f8f9fa;
+            color: #3c4043;
             border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .search-btn:hover {
-            background: #555;
-        }
-        
-        .clear-btn {
-            padding: 10px 15px;
-            background: #666;
-            color: white;
-            border: none;
-            border-radius: 25px;
+            border-radius: 16px;
             font-size: 14px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.1s;
+            min-width: 64px;
+            height: 36px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .clear-btn:hover {
-            background: #888;
+        .search-btn:hover, .clear-btn:hover {
+            background: #f1f3f4;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        .search-btn:active, .clear-btn:active {
+            background: #e8eaed;
         }
         
         .language-selector {
-            padding: 10px 15px;
-            border: 2px solid #ddd;
-            border-radius: 25px;
+            padding: 8px 20px 8px 12px;
+            border: none;
+            border-radius: 0;
             font-size: 14px;
             outline: none;
-            background: white;
+            background: transparent;
             cursor: pointer;
-            transition: border-color 0.3s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6368' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 4px center;
+            background-size: 14px;
+            color: #5f6368;
+        }
+        
+        .language-selector:hover {
+            color: #3c4043;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233c4043' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
         }
         
         .language-selector:focus {
-            border-color: #888;
+            outline: none;
+            color: #3c4043;
         }
         
         .card-tags {
@@ -497,8 +516,8 @@
     </div>
 
     <script>
-        // 卡片总数 - 根据实际图片数量调整
-        const TOTAL_CARDS = 11;
+        // 卡片总数 - 修改为145张卡片
+        const TOTAL_CARDS = 145;
         
         // 多语言文本
         const translations = {
@@ -845,7 +864,7 @@
             generateCards();
         }
         
-        // 延迟加载配置
+        // 延迟加载配置 - 修改为12张卡片每页
         const CARDS_PER_PAGE = 12;
         let currentPage = 1;
         let isLoading = false;
@@ -856,6 +875,10 @@
             const loadingElement = document.getElementById('loading');
             
             try {
+                // 清空容器
+                container.innerHTML = '';
+                console.log(`开始生成 ${TOTAL_CARDS} 张卡片...`);
+                
                 // 先生成所有卡片的占位符，但不加载图片
                 for (let i = 1; i <= TOTAL_CARDS; i++) {
                     const card = document.createElement('div');
@@ -897,6 +920,8 @@
                     
                     container.appendChild(card);
                 }
+                
+                console.log(`已生成 ${container.children.length} 张卡片占位符`);
                 
                 // 加载第一批卡片
                 await loadCards();
@@ -956,9 +981,10 @@
             // 构建图片路径 - 使用绝对路径
             const frontImagePath = `./images/card/1997CardassMasters/${cardNumber}_A.jpg`;
             const backImagePath = `./images/card/1997CardassMasters/${cardNumber}_B.jpg`;
+            const defaultImagePath = `./images/card/1997CardassMasters/default.png`;
             
             // 为每张卡片添加唯一时间戳防止缓存
-            const timestamp = Date.now() + cardNumber;
+            const timestamp = Date.now() + Math.random() + cardNumber;
             
             // 生成tag HTML
             const tags = getCardTags(cardNumber);
@@ -970,21 +996,23 @@
             if (frontPlaceholder) {
                 if (frontExists) {
                     frontPlaceholder.outerHTML = `
-                        <img src="${frontImagePath}?t=${timestamp}" alt="卡片${cardNumber}正面" loading="lazy">
+                        <img src="${frontImagePath}?v=${timestamp}" alt="卡片${cardNumber}正面" loading="lazy">
                         <div class="card-number">${cardNumber}</div>
                         <div class="card-tags">${tagHtml}</div>
                         <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
                     `;
                 } else {
-                    // 图片不存在，保留占位符但更新内容
-                    frontPlaceholder.innerHTML = `
-                        <div class="placeholder-content">📷</div>
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 12px; font-weight: bold; text-align: center; margin-top: 30px;">
-                            卡片${cardNumber}<br>图片暂缺
+                    // 图片不存在，使用default.png
+                    frontPlaceholder.outerHTML = `
+                        <div style="position: relative; width: 100%; height: 100%;">
+                            <img src="${defaultImagePath}?v=${timestamp}" alt="卡片${cardNumber}正面默认" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 14px; font-weight: bold; text-align: center; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 5px;">
+                                卡片${cardNumber}<br>图片暂缺
+                            </div>
+                            <div class="card-number">${cardNumber}</div>
+                            <div class="card-tags">${tagHtml}</div>
+                            <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
                         </div>
-                        <div class="card-number">${cardNumber}</div>
-                        <div class="card-tags">${tagHtml}</div>
-                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
                     `;
                 }
             }
@@ -995,21 +1023,23 @@
             if (backPlaceholder) {
                 if (backExists) {
                     backPlaceholder.outerHTML = `
-                        <img src="${backImagePath}?t=${timestamp}" alt="卡片${cardNumber}背面" loading="lazy">
+                        <img src="${backImagePath}?v=${timestamp}" alt="卡片${cardNumber}背面" loading="lazy">
                         <div class="card-number">${cardNumber}</div>
                         <div class="card-tags">${tagHtml}</div>
                         <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
                     `;
                 } else {
-                    // 图片不存在，保留占位符但更新内容
-                    backPlaceholder.innerHTML = `
-                        <div class="placeholder-content">📷</div>
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 12px; font-weight: bold; text-align: center; margin-top: 30px;">
-                            卡片${cardNumber}<br>背面暂缺
+                    // 图片不存在，使用default.png
+                    backPlaceholder.outerHTML = `
+                        <div style="position: relative; width: 100%; height: 100%;">
+                            <img src="${defaultImagePath}?v=${timestamp}" alt="卡片${cardNumber}背面默认" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 14px; font-weight: bold; text-align: center; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 5px;">
+                                卡片${cardNumber}<br>背面暂缺
+                            </div>
+                            <div class="card-number">${cardNumber}</div>
+                            <div class="card-tags">${tagHtml}</div>
+                            <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
                         </div>
-                        <div class="card-number">${cardNumber}</div>
-                        <div class="card-tags">${tagHtml}</div>
-                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
                     `;
                 }
             }
@@ -1155,6 +1185,7 @@
             
             const frontImagePath = `./images/card/1997CardassMasters/${cardNumber}_A.jpg`;
             const backImagePath = `./images/card/1997CardassMasters/${cardNumber}_B.jpg`;
+            const defaultImagePath = `./images/card/1997CardassMasters/default.png`;
             
             // 为模态框图片添加时间戳
             const modalTimestamp = Date.now() + cardNumber;
@@ -1164,7 +1195,10 @@
                     <div class="modal-card-front">
                         <div class="modal-image-container">
                             <div class="modal-image-wrapper">
-                                <img src="${frontImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}正面" loading="lazy" onerror="handleModalImageError(this, ${cardNumber}, 'A')">
+                                <img src="${frontImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}正面" loading="lazy" onerror="this.src='${defaultImagePath}?t=${modalTimestamp}'; this.onerror=function(){ this.outerHTML='<div style=\\'display: flex; justify-content: center; align-items: center; height: 100%; background: #f0f0f0; color: #666; font-size: 24px; font-weight: bold;\\'>图片加载失败</div>';}">
+                                <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #ff4757; font-size: 16px; font-weight: bold; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: none;" id="frontMissingText">
+                                    卡片${cardNumber}<br>图片暂缺
+                                </div>
                             </div>
                         </div>
                         <div class="card-number">${cardNumber}</div>
@@ -1173,7 +1207,10 @@
                     <div class="modal-card-back">
                         <div class="modal-image-container">
                             <div class="modal-image-wrapper">
-                                <img src="${backImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}背面" loading="lazy" onerror="handleModalImageError(this, ${cardNumber}, 'B')">
+                                <img src="${backImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}背面" loading="lazy" onerror="this.src='${defaultImagePath}?t=${modalTimestamp}'; this.onerror=function(){ this.outerHTML='<div style=\\'display: flex; justify-content: center; align-items: center; height: 100%; background: #f0f0f0; color: #666; font-size: 24px; font-weight: bold;\\'>图片加载失败</div>';}">
+                                <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #ff4757; font-size: 16px; font-weight: bold; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: none;" id="backMissingText">
+                                    卡片${cardNumber}<br>背面暂缺
+                                </div>
                             </div>
                         </div>
                         <div class="card-number">${cardNumber}</div>
@@ -1181,6 +1218,29 @@
                     </div>
                 </div>
             `;
+            
+            // 检查图片是否存在，如果不存在则显示提示文本
+            Promise.all([
+                checkImageExists(frontImagePath),
+                checkImageExists(backImagePath)
+            ]).then(([frontExists, backExists]) => {
+                const frontMissingText = document.getElementById('frontMissingText');
+                const backMissingText = document.getElementById('backMissingText');
+                const frontImg = modalCard.querySelector('.modal-card-front img');
+                const backImg = modalCard.querySelector('.modal-card-back img');
+                
+                if (!frontExists) {
+                    frontImg.src = defaultImagePath + '?t=' + modalTimestamp;
+                    frontImg.style.opacity = '0.7';
+                    if (frontMissingText) frontMissingText.style.display = 'block';
+                }
+                
+                if (!backExists) {
+                    backImg.src = defaultImagePath + '?t=' + modalTimestamp;
+                    backImg.style.opacity = '0.7';
+                    if (backMissingText) backMissingText.style.display = 'block';
+                }
+            });
             
             // 重置缩放状态
             scale = 1;
@@ -1387,6 +1447,11 @@
         
         // DOM加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
+            // 清除之前的缓存和状态
+            currentPage = 1;
+            isLoading = false;
+            
+            // 强制重新生成卡片
             generateCards();
             
             // 设置滚动检测
