@@ -1,12 +1,15 @@
 # Git ignore file for SLAMDUNK card gallery
 
+# Allow specific image directories for card gallery
+!images/card/1997CardassMasters/*.jpg
+!images/card/1997CardassMasters/*.png
+
 # Large image files (consider using external CDN)
 *.jpg
 *.jpeg
 *.png
 *.gif
 *.webp
-!images/card/1997CardassMasters/default.png
 
 # System files
 .DS_Store
