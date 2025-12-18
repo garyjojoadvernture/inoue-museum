@@ -399,6 +399,62 @@
             border-radius: 10px;
             margin: 20px;
         }
+        
+        .card-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+            color: #666;
+            position: relative;
+        }
+        
+        .placeholder-content {
+            font-size: 48px;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        .load-more-container {
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+        }
+        
+        .load-more-btn {
+            padding: 15px 30px;
+            background: linear-gradient(145deg, #333, #555);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .load-more-btn:hover {
+            background: linear-gradient(145deg, #555, #777);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .load-more-btn:active {
+            transform: translateY(0);
+        }
+        
+        .load-more-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
     </style>
 </head>
 <body>
@@ -424,6 +480,9 @@
         </div>
         <div class="no-results" id="noResults" style="display: none;">
             没有找到匹配的卡片
+        </div>
+        <div class="load-more-container">
+            <button class="load-more-btn" id="loadMoreBtn" onclick="loadCards()">加载更多</button>
         </div>
     </div>
     
@@ -451,7 +510,8 @@
                 noResults: "没有找到匹配的卡片",
                 cardFront: "正面",
                 cardBack: "背面",
-                imageError: "无法加载卡片"
+                imageError: "无法加载卡片",
+                loadMore: "加载更多"
             },
             en: {
                 searchPlaceholder: "Search cards by tag...",
@@ -461,7 +521,8 @@
                 noResults: "No matching cards found",
                 cardFront: "Front",
                 cardBack: "Back",
-                imageError: "Unable to load card"
+                imageError: "Unable to load card",
+                loadMore: "Load More"
             },
             ja: {
                 searchPlaceholder: "タグでカードを検索...",
@@ -471,7 +532,8 @@
                 noResults: "一致するカードが見つかりません",
                 cardFront: "表",
                 cardBack: "裏",
-                imageError: "カードを読み込めません"
+                imageError: "カードを読み込めません",
+                loadMore: "もっと読み込む"
             }
         };
         
@@ -767,6 +829,9 @@
             document.querySelector('.clear-btn').textContent = t.clearBtn;
             document.getElementById('noResults').textContent = t.noResults;
             
+            // 更新加载更多按钮文本
+            updateLoadMoreButton();
+            
             // 重新生成卡片
             regenerateCards();
         }
@@ -775,8 +840,15 @@
         function regenerateCards() {
             const container = document.getElementById('cardsContainer');
             container.innerHTML = '';
+            currentPage = 1;
+            isLoading = false;
             generateCards();
         }
+        
+        // 延迟加载配置
+        const CARDS_PER_PAGE = 12;
+        let currentPage = 1;
+        let isLoading = false;
         
         // 生成卡片
         async function generateCards() {
@@ -784,37 +856,36 @@
             const loadingElement = document.getElementById('loading');
             
             try {
-                // 创建250张卡片
+                // 先生成所有卡片的占位符，但不加载图片
                 for (let i = 1; i <= TOTAL_CARDS; i++) {
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.setAttribute('data-tags', getCardTags(i).join(','));
                     card.setAttribute('data-card-number', i);
-                    
-                    // 构建图片路径
-                    const frontImagePath = `images/card/1997CardassMasters/${i}_A.jpg`;
-                    const backImagePath = `images/card/1997CardassMasters/${i}_B.jpg`;
-                    
-                    // 为每张卡片添加唯一时间戳防止缓存
-                    const timestamp = Date.now() + i;
+                    card.setAttribute('data-loaded', 'false'); // 标记是否已加载
                     
                     // 生成tag HTML
                     const tags = getCardTags(i);
                     const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
                     
+                    // 初始时使用占位符，不加载实际图片
                     card.innerHTML = `
                         <div class="card-inner">
                             <div class="card-front">
-                                <img src="${frontImagePath}?t=${timestamp}" alt="卡片${i}正面" loading="lazy" onerror="handleImageError(this, ${i}, 'A')">
-                                <div class="card-number">${i}</div>
-                                <div class="card-tags">${tagHtml}</div>
-                                <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                <div class="card-placeholder" data-card-number="${i}" data-side="A">
+                                    <div class="placeholder-content">🏀</div>
+                                    <div class="card-number">${i}</div>
+                                    <div class="card-tags">${tagHtml}</div>
+                                    <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                </div>
                             </div>
                             <div class="card-back">
-                                <img src="${backImagePath}?t=${timestamp}" alt="卡片${i}背面" loading="lazy" onerror="handleImageError(this, ${i}, 'B')">
-                                <div class="card-number">${i}</div>
-                                <div class="card-tags">${tagHtml}</div>
-                                <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                <div class="card-placeholder" data-card-number="${i}" data-side="B">
+                                    <div class="placeholder-content">🏀</div>
+                                    <div class="card-number">${i}</div>
+                                    <div class="card-tags">${tagHtml}</div>
+                                    <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -827,15 +898,107 @@
                     container.appendChild(card);
                 }
                 
-                // 模拟加载延迟，实际使用时可以移除
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // 加载第一批卡片
+                await loadCards();
                 
             } catch (error) {
-                console.error('加载卡片时出错:', error);
+                console.error('生成卡片时出错:', error);
             } finally {
                 loadingElement.style.display = 'none';
             }
         }
+        
+        // 加载指定范围的卡片
+        async function loadCards() {
+            if (isLoading) return;
+            isLoading = true;
+            
+            const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
+            const endIndex = Math.min(startIndex + CARDS_PER_PAGE, TOTAL_CARDS);
+            
+            const cards = document.querySelectorAll('.card');
+            
+            for (let i = startIndex; i < endIndex; i++) {
+                if (i >= cards.length) break;
+                
+                const card = cards[i];
+                const cardNumber = parseInt(card.getAttribute('data-card-number'));
+                const isLoaded = card.getAttribute('data-loaded') === 'true';
+                
+                if (!isLoaded) {
+                    await loadCardImages(card, cardNumber);
+                    card.setAttribute('data-loaded', 'true');
+                }
+            }
+            
+            currentPage++;
+            isLoading = false;
+            
+            // 显示加载更多按钮或检测滚动
+            updateLoadMoreButton();
+        }
+        
+        // 加载单个卡片的图片
+        async function loadCardImages(card, cardNumber) {
+            const frontPlaceholder = card.querySelector('[data-side="A"]');
+            const backPlaceholder = card.querySelector('[data-side="B"]');
+            
+            // 构建图片路径
+            const frontImagePath = `images/card/1997CardassMasters/${cardNumber}_A.jpg`;
+            const backImagePath = `images/card/1997CardassMasters/${cardNumber}_B.jpg`;
+            
+            // 为每张卡片添加唯一时间戳防止缓存
+            const timestamp = Date.now() + cardNumber;
+            
+            // 生成tag HTML
+            const tags = getCardTags(cardNumber);
+            const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            // 替换正面占位符为实际图片
+            if (frontPlaceholder) {
+                frontPlaceholder.outerHTML = `
+                    <img src="${frontImagePath}?t=${timestamp}" alt="卡片${cardNumber}正面" loading="lazy" onerror="handleImageError(this, ${cardNumber}, 'A')">
+                    <div class="card-number">${cardNumber}</div>
+                    <div class="card-tags">${tagHtml}</div>
+                    <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                `;
+            }
+            
+            // 替换背面占位符为实际图片
+            if (backPlaceholder) {
+                backPlaceholder.outerHTML = `
+                    <img src="${backImagePath}?t=${timestamp}" alt="卡片${cardNumber}背面" loading="lazy" onerror="handleImageError(this, ${cardNumber}, 'B')">
+                    <div class="card-number">${cardNumber}</div>
+                    <div class="card-tags">${tagHtml}</div>
+                    <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                `;
+            }
+        }
+        
+        // 更新"加载更多"按钮状态
+        function updateLoadMoreButton() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const loadedCount = document.querySelectorAll('.card[data-loaded="true"]').length;
+            const t = translations[currentLanguage];
+            
+            if (loadMoreBtn) {
+                if (loadedCount >= TOTAL_CARDS) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'block';
+                    loadMoreBtn.textContent = `${t.loadMore} (${loadedCount}/${TOTAL_CARDS})`;
+                }
+            }
+            
+            // 模拟加载延迟，实际使用时可以移除
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+        } catch (error) {
+            console.error('生成卡片时出错:', error);
+        } finally {
+            loadingElement.style.display = 'none';
+        }
+    }
         
         // 图片加载错误处理
         function handleImageError(imgElement, cardNumber, side) {
@@ -1169,9 +1332,34 @@
             defaultImg.src = defaultImagePath;
         }
         
-        // 回车键搜索
+        // 滚动检测加载更多
+        function setupScrollDetection() {
+            let scrollTimeout;
+            
+            window.addEventListener('scroll', function() {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(function() {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const windowHeight = window.innerHeight;
+                    const documentHeight = document.documentElement.scrollHeight;
+                    
+                    // 当滚动到距离底部200px时自动加载更多
+                    if (scrollTop + windowHeight >= documentHeight - 200) {
+                        const loadedCount = document.querySelectorAll('.card[data-loaded="true"]').length;
+                        if (loadedCount < TOTAL_CARDS && !isLoading) {
+                            loadCards();
+                        }
+                    }
+                }, 100); // 防抖处理，避免频繁触发
+            });
+        }
+        
+        // DOM加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
             generateCards();
+            
+            // 设置滚动检测
+            setupScrollDetection();
             
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('keypress', function(e) {
