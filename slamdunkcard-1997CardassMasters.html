@@ -953,9 +953,9 @@
             const frontPlaceholder = card.querySelector('[data-side="A"]');
             const backPlaceholder = card.querySelector('[data-side="B"]');
             
-            // 构建图片路径
-            const frontImagePath = `images/card/1997CardassMasters/${cardNumber}_A.jpg`;
-            const backImagePath = `images/card/1997CardassMasters/${cardNumber}_B.jpg`;
+            // 构建图片路径 - 使用绝对路径
+            const frontImagePath = `./images/card/1997CardassMasters/${cardNumber}_A.jpg`;
+            const backImagePath = `./images/card/1997CardassMasters/${cardNumber}_B.jpg`;
             
             // 为每张卡片添加唯一时间戳防止缓存
             const timestamp = Date.now() + cardNumber;
@@ -1037,7 +1037,7 @@
             console.warn(`${t.imageError} ${cardNumber}_${side}.jpg`);
             
             // 尝试加载默认图片
-            const defaultImagePath = 'images/card/1997CardassMasters/default.png';
+            const defaultImagePath = './images/card/1997CardassMasters/default.png';
             const defaultImg = new Image();
             
             defaultImg.onload = function() {
@@ -1153,8 +1153,8 @@
             const tags = getCardTags(cardNumber);
             const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
             
-            const frontImagePath = `images/card/1997CardassMasters/${cardNumber}_A.jpg`;
-            const backImagePath = `images/card/1997CardassMasters/${cardNumber}_B.jpg`;
+            const frontImagePath = `./images/card/1997CardassMasters/${cardNumber}_A.jpg`;
+            const backImagePath = `./images/card/1997CardassMasters/${cardNumber}_B.jpg`;
             
             // 为模态框图片添加时间戳
             const modalTimestamp = Date.now() + cardNumber;
@@ -1313,7 +1313,7 @@
             console.warn(`${t.imageError} ${cardNumber}_${side}.jpg`);
             
             // 尝试加载默认图片
-            const defaultImagePath = 'images/card/1997CardassMasters/default.png';
+            const defaultImagePath = './images/card/1997CardassMasters/default.png';
             const defaultImg = new Image();
             
             defaultImg.onload = function() {
