@@ -498,7 +498,7 @@
 
     <script>
         // 卡片总数 - 根据实际图片数量调整
-        const TOTAL_CARDS = 140;
+        const TOTAL_CARDS = 11;
         
         // 多语言文本
         const translations = {
@@ -938,6 +938,16 @@
             updateLoadMoreButton();
         }
         
+        // 检查图片是否存在
+        async function checkImageExists(imagePath) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = imagePath;
+            });
+        }
+        
         // 加载单个卡片的图片
         async function loadCardImages(card, cardNumber) {
             const frontPlaceholder = card.querySelector('[data-side="A"]');
@@ -954,24 +964,54 @@
             const tags = getCardTags(cardNumber);
             const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
             
-            // 替换正面占位符为实际图片
+            // 检查正面图片是否存在
+            const frontExists = await checkImageExists(frontImagePath);
+            
             if (frontPlaceholder) {
-                frontPlaceholder.outerHTML = `
-                    <img src="${frontImagePath}?t=${timestamp}" alt="卡片${cardNumber}正面" loading="lazy" onerror="handleImageError(this, ${cardNumber}, 'A')">
-                    <div class="card-number">${cardNumber}</div>
-                    <div class="card-tags">${tagHtml}</div>
-                    <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
-                `;
+                if (frontExists) {
+                    frontPlaceholder.outerHTML = `
+                        <img src="${frontImagePath}?t=${timestamp}" alt="卡片${cardNumber}正面" loading="lazy">
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                    `;
+                } else {
+                    // 图片不存在，保留占位符但更新内容
+                    frontPlaceholder.innerHTML = `
+                        <div class="placeholder-content">📷</div>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 12px; font-weight: bold; text-align: center; margin-top: 30px;">
+                            卡片${cardNumber}<br>图片暂缺
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                    `;
+                }
             }
             
-            // 替换背面占位符为实际图片
+            // 检查背面图片是否存在
+            const backExists = await checkImageExists(backImagePath);
+            
             if (backPlaceholder) {
-                backPlaceholder.outerHTML = `
-                    <img src="${backImagePath}?t=${timestamp}" alt="卡片${cardNumber}背面" loading="lazy" onerror="handleImageError(this, ${cardNumber}, 'B')">
-                    <div class="card-number">${cardNumber}</div>
-                    <div class="card-tags">${tagHtml}</div>
-                    <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
-                `;
+                if (backExists) {
+                    backPlaceholder.outerHTML = `
+                        <img src="${backImagePath}?t=${timestamp}" alt="卡片${cardNumber}背面" loading="lazy">
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                    `;
+                } else {
+                    // 图片不存在，保留占位符但更新内容
+                    backPlaceholder.innerHTML = `
+                        <div class="placeholder-content">📷</div>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 12px; font-weight: bold; text-align: center; margin-top: 30px;">
+                            卡片${cardNumber}<br>背面暂缺
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                    `;
+                }
             }
         }
         
@@ -989,16 +1029,7 @@
                     loadMoreBtn.textContent = `${t.loadMore} (${loadedCount}/${TOTAL_CARDS})`;
                 }
             }
-            
-            // 模拟加载延迟，实际使用时可以移除
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-        } catch (error) {
-            console.error('生成卡片时出错:', error);
-        } finally {
-            loadingElement.style.display = 'none';
         }
-    }
         
         // 图片加载错误处理
         function handleImageError(imgElement, cardNumber, side) {
