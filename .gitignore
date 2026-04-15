@@ -1,16 +1,5 @@
 # Git ignore file for SLAMDUNK card gallery
 
-# Allow specific image directories for card gallery
-!images/card/1997CardassMasters/*.jpg
-!images/card/1997CardassMasters/*.png
-
-# Large image files (consider using external CDN)
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.webp
-
 # System files
 .DS_Store
 Thumbs.db
@@ -26,3 +15,54 @@ npm-debug.log*
 # Temporary files
 *.tmp
 *.temp
+
+# Large image files - explicitly allow card gallery images
+# Card gallery images (use ! to negate ignore)
+!images/goods/slamdunk/card/1997CardassMasters/*.jpg
+!images/goods/slamdunk/card/1997CardassMasters/*.jpeg
+!images/goods/slamdunk/card/1997CardassMasters/*.png
+!images/goods/slamdunk/card/1997CardassMasters/*.gif
+!images/goods/slamdunk/card/1997CardassMasters/*.webp
+!images/goods/slamdunk/card/1997CardassMasters/*.avif
+
+!images/goods/slamdunk/card/seriesB/*.jpg
+!images/goods/slamdunk/card/seriesB/*.jpeg
+!images/goods/slamdunk/card/seriesB/*.png
+!images/goods/slamdunk/card/seriesB/*.gif
+!images/goods/slamdunk/card/seriesB/*.webp
+!images/goods/slamdunk/card/seriesB/*.avif
+
+!images/goods/slamdunk/card/1994CardassSlamDunk/*.jpg
+!images/goods/slamdunk/card/1994CardassSlamDunk/*.jpeg
+!images/goods/slamdunk/card/1994CardassSlamDunk/*.png
+!images/goods/slamdunk/card/1994CardassSlamDunk/*.gif
+!images/goods/slamdunk/card/1994CardassSlamDunk/*.webp
+!images/goods/slamdunk/card/1994CardassSlamDunk/*.avif
+
+!images/goods/slamdunk/card/ppcard/*.jpg
+!images/goods/slamdunk/card/ppcard/*.jpeg
+!images/goods/slamdunk/card/ppcard/*.png
+!images/goods/slamdunk/card/ppcard/*.gif
+!images/goods/slamdunk/card/ppcard/*.webp
+!images/goods/slamdunk/card/ppcard/*.avif
+
+!images/goods/slamdunk/card/jumbocard/*.jpg
+!images/goods/slamdunk/card/jumbocard/*.jpeg
+!images/goods/slamdunk/card/jumbocard/*.png
+!images/goods/slamdunk/card/jumbocard/*.gif
+!images/goods/slamdunk/card/jumbocard/*.webp
+!images/goods/slamdunk/card/jumbocard/*.avif
+
+!images/goods/slamdunk/card/cardseries/*.jpg
+!images/goods/slamdunk/card/cardseries/*.jpeg
+!images/goods/slamdunk/card/cardseries/*.png
+!images/goods/slamdunk/card/cardseries/*.gif
+!images/goods/slamdunk/card/cardseries/*.webp
+!images/goods/slamdunk/card/cardseries/*.avif
+
+!images/goods/slamdunk/card/*.jpg
+!images/goods/slamdunk/card/*.jpeg
+!images/goods/slamdunk/card/*.png
+!images/goods/slamdunk/card/*.gif
+!images/goods/slamdunk/card/*.webp
+!images/goods/slamdunk/card/*.avif
