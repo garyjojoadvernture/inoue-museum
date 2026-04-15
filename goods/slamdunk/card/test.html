@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Card Gallery</title>
+</head>
+<body>
+    <h1>Card Gallery Test</h1>
+    <div id="debug"></div>
+    <div id="cardsContainer"></div>
+    
+    <script src="card-config.js"></script>
+    <script>
+        console.log('=== Test Debug Info ===');
+        console.log('Available series:', Object.keys(CARD_CONFIGS));
+        console.log('URL params:', window.location.search);
+        console.log('Current config:', currentConfig);
+        console.log('TOTAL_CARDS:', currentConfig.totalCards);
+        console.log('Card numbers:', currentConfig.cardNumbers);
+        
+        const debug = document.getElementById('debug');
+        debug.innerHTML = `
+            <p><strong>Available Series:</strong> ${Object.keys(CARD_CONFIGS).join(', ')}</p>
+            <p><strong>URL:</strong> ${window.location.search}</p>
+            <p><strong>Current Series:</strong> ${urlParams.get('series') || '1997CardassMasters'}</p>
+            <p><strong>Total Cards:</strong> ${currentConfig.totalCards}</p>
+            <p><strong>Card Numbers:</strong> ${currentConfig.cardNumbers ? currentConfig.cardNumbers.join(', ') : 'Sequential 1-' + currentConfig.totalCards}</p>
+            <p><strong>Image Path:</strong> ${currentConfig.imagePath}</p>
+        `;
+        
+        // Simple test: create one card
+        const container = document.getElementById('cardsContainer');
+        const testCard = document.createElement('div');
+        testCard.style.cssText = 'width: 240px; height: 330px; background: #f0f0f0; margin: 10px; display: inline-block; text-align: center; line-height: 330px;';
+        testCard.textContent = 'Test Card';
+        container.appendChild(testCard);
+    </script>
+</body>
+</html>

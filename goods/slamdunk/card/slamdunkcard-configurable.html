@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>SLAMDUNK卡片展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+        }
+        
+        .card {
+            width: 240px;
+            height: 330px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .card-front {
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-back {
+            background: linear-gradient(145deg, #666, #444);
+            transform: rotateY(180deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            z-index: 1000;
+        }
+        
+        .search-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            background: white;
+            padding: 8px;
+            border-radius: 24px;
+            border: 1px solid #dfe1e5;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: none;
+            transition: all 0.1s;
+        }
+        
+        .search-container:hover {
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            border-color: rgba(223,225,229,0);
+        }
+        
+        .language-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+        }
+        
+        .search-input:focus {
+            outline: none;
+        }
+        
+        .search-btn, .clear-btn {
+            padding: 10px 16px;
+            background: #f8f9fa;
+            color: #3c4043;
+            border: none;
+            border-radius: 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.1s;
+            min-width: 64px;
+            height: 36px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-btn:hover, .clear-btn:hover {
+            background: #f1f3f4;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        .search-btn:active, .clear-btn:active {
+            background: #e8eaed;
+        }
+        
+        .language-selector {
+            padding: 8px 20px 8px 12px;
+            border: none;
+            border-radius: 0;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.1s;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6368' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 4px center;
+            background-size: 14px;
+            color: #5f6368;
+        }
+        
+        .language-selector:hover {
+            color: #3c4043;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233c4043' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
+        
+        .language-selector:focus {
+            outline: none;
+            color: #3c4043;
+        }
+        
+        .card-tags {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            z-index: 10;
+        }
+        
+        .card-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 11;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tag {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .zoom-icon {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 12;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+        
+        .zoom-icon:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .zoom-icon::before {
+            content: "🔍";
+            font-size: 16px;
+        }
+        
+        .card.hidden {
+            display: none;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 600px;
+            max-height: 90vh;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-card {
+            width: 480px;
+            height: 660px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .modal-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .modal-card.flipped .modal-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .modal-card-front, .modal-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-card-front {
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-card-back {
+            background: #f0f0f0;
+            transform: rotateY(180deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+            transition: background 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: white;
+        }
+        
+        .modal-close::before {
+            content: "✕";
+        }
+        
+        .modal-image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        .modal-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
+        }
+        
+        .modal-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-size: 20px;
+            padding: 40px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+            margin: 20px;
+        }
+        
+        .card-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+            color: #666;
+            position: relative;
+        }
+        
+        .placeholder-content {
+            font-size: 48px;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        .load-more-container {
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+        }
+        
+        .load-more-btn {
+            padding: 15px 30px;
+            background: linear-gradient(145deg, #333, #555);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .load-more-btn:hover {
+            background: linear-gradient(145deg, #555, #777);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .load-more-btn:active {
+            transform: translateY(0);
+        }
+        
+        .load-more-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">加载卡片中...</div>
+    
+    <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="输入tag搜索卡片...">
+        <button class="search-btn" onclick="searchCards()">搜索</button>
+        <button class="clear-btn" onclick="clearSearch()">清除</button>
+    </div>
+    
+    <div class="language-container">
+        <select class="language-selector" id="languageSelector" onchange="changeLanguage()">
+            <option value="zh">中文</option>
+            <option value="en">EN</option>
+            <option value="ja">日本語</option>
+        </select>
+    </div>
+    
+    <div style="margin-top: 100px;">
+        <div class="cards-container" id="cardsContainer">
+            <!-- 卡片将通过JavaScript动态生成 -->
+        </div>
+        <div class="no-results" id="noResults" style="display: none;">
+            没有找到匹配的卡片
+        </div>
+        <div class="load-more-container">
+            <button class="load-more-btn" id="loadMoreBtn" onclick="loadCards()">加载更多</button>
+        </div>
+    </div>
+    
+    <!-- 放大显示模态框 -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()"></div>
+            <div class="modal-card" id="modalCard">
+                <!-- 模态框卡片内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="card-config.js"></script>
+    <script>
+        // 从配置中获取卡片总数
+        let TOTAL_CARDS = currentConfig.totalCards;
+        
+        // 多语言文本
+        const translations = {
+            zh: {
+                searchPlaceholder: "输入tag搜索卡片...",
+                searchBtn: "搜索",
+                clearBtn: "清除",
+                loading: "加载卡片中...",
+                noResults: "没有找到匹配的卡片",
+                cardFront: "正面",
+                cardBack: "背面",
+                imageError: "无法加载卡片",
+                loadMore: "加载更多"
+            },
+            en: {
+                searchPlaceholder: "Search cards by tag...",
+                searchBtn: "Search",
+                clearBtn: "Clear",
+                loading: "Loading cards...",
+                noResults: "No matching cards found",
+                cardFront: "Front",
+                cardBack: "Back",
+                imageError: "Unable to load card",
+                loadMore: "Load More"
+            },
+            ja: {
+                searchPlaceholder: "タグでカードを検索...",
+                searchBtn: "検索",
+                clearBtn: "クリア",
+                loading: "カードを読み込み中...",
+                noResults: "一致するカードが見つかりません",
+                cardFront: "表",
+                cardBack: "裏",
+                imageError: "カードを読み込めません",
+                loadMore: "もっと読み込む"
+            }
+        };
+        
+        // 当前语言
+        let currentLanguage = 'zh';
+        
+        // 卡片tag数据（从配置中获取）
+        let cardTags = currentConfig.cardTags;
+        
+        // 生成默认tags（对于没有定义的卡片）
+        function generateDefaultTags(cardNumber, lang) {
+            const tags = [];
+            const tagMap = {
+                zh: ["湘北", "海南", "翔阳", "陵南", "丰玉", "山王", "教练", "经理", "友情", "比赛", "技术", "回忆", "经典", "特殊", "其他"],
+                en: ["Shohoku", "Ryozan", "Shoyo", "Ryonan", "Toyotama", "Sannoh", "Coach", "Manager", "Friendship", "Match", "Skill", "Memory", "Classic", "Special", "Other"],
+                ja: ["湘北", "海南", "翔陽", "陵南", "豊玉", "山王", "監督", "マネージャー", "友情", "試合", "技術", "思い出", "名場面", "特殊", "その他"]
+            };
+            
+            const limitedMap = {
+                zh: ["限量", "珍藏"],
+                en: ["Limited", "Collection"],
+                ja: ["限定", "コレクション"]
+            };
+            
+            if (cardNumber <= 10) tags.push(tagMap[lang][0]);
+            else if (cardNumber <= 15) tags.push(tagMap[lang][1]);
+            else if (cardNumber <= 20) tags.push(tagMap[lang][2]);
+            else if (cardNumber <= 25) tags.push(tagMap[lang][3]);
+            else if (cardNumber <= 30) tags.push(tagMap[lang][4]);
+            else if (cardNumber <= 35) tags.push(tagMap[lang][5]);
+            else if (cardNumber <= 40) tags.push(tagMap[lang][6]);
+            else if (cardNumber <= 45) tags.push(tagMap[lang][7]);
+            else if (cardNumber <= 50) tags.push(tagMap[lang][8]);
+            else if (cardNumber <= 55) tags.push(tagMap[lang][9]);
+            else if (cardNumber <= 60) tags.push(tagMap[lang][10]);
+            else if (cardNumber <= 65) tags.push(tagMap[lang][11]);
+            else if (cardNumber <= 70) tags.push(tagMap[lang][12]);
+            else if (cardNumber <= 75) tags.push(tagMap[lang][13]);
+            else tags.push(tagMap[lang][14]);
+            
+            if (cardNumber % 5 === 0) tags.push(limitedMap[lang][0]);
+            if (cardNumber % 10 === 0) tags.push(limitedMap[lang][1]);
+            
+            return tags;
+        }
+        
+        // 获取卡片tags
+        function getCardTags(cardNumber) {
+            return cardTags[currentLanguage][cardNumber] || generateDefaultTags(cardNumber, currentLanguage);
+        }
+        
+        // 更新页面标题
+        function updatePageTitle() {
+            const title = currentConfig.title[currentLanguage];
+            document.title = title;
+        }
+
+        // 语言切换函数
+        function changeLanguage() {
+            const selector = document.getElementById('languageSelector');
+            currentLanguage = selector.value;
+            
+            // 更新页面标题
+            updatePageTitle();
+            
+            // 更新界面文本
+            const t = translations[currentLanguage];
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.querySelector('.search-btn').textContent = t.searchBtn;
+            document.querySelector('.clear-btn').textContent = t.clearBtn;
+            document.getElementById('noResults').textContent = t.noResults;
+            
+            // 更新加载更多按钮文本
+            updateLoadMoreButton();
+            
+            // 重新生成卡片
+            regenerateCards();
+        }
+        
+        // 重新生成卡片
+        function regenerateCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            currentPage = 1;
+            isLoading = false;
+            generateCards();
+        }
+        
+        // 延迟加载配置 - 从配置中获取
+        let CARDS_PER_PAGE = currentConfig.cardsPerPage;
+        let currentPage = 1;
+        let isLoading = false;
+        
+        // 生成卡片
+        function generateCards() {
+            const container = document.getElementById('cardsContainer');
+            const loadingElement = document.getElementById('loading');
+            
+            try {
+                // 清空容器
+                container.innerHTML = '';
+                console.log(`开始生成 ${TOTAL_CARDS} 张卡片...`);
+                
+                // 先生成所有卡片的占位符，但不加载图片
+                for (let i = 1; i <= TOTAL_CARDS; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.setAttribute('data-tags', getCardTags(i).join(','));
+                    card.setAttribute('data-card-number', i);
+                    card.setAttribute('data-loaded', 'false'); // 标记是否已加载
+                    
+                    // 生成tag HTML
+                    const tags = getCardTags(i);
+                    const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                    
+                    // 初始时使用占位符，不加载实际图片
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="card-placeholder" data-card-number="${i}" data-side="A">
+                                    <div class="placeholder-content">🏀</div>
+                                    <div class="card-number">${i}</div>
+                                    <div class="card-tags">${tagHtml}</div>
+                                    <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-placeholder" data-card-number="${i}" data-side="B">
+                                    <div class="placeholder-content">🏀</div>
+                                    <div class="card-number">${i}</div>
+                                    <div class="card-tags">${tagHtml}</div>
+                                    <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 添加点击事件
+                    card.addEventListener('click', function() {
+                        this.classList.toggle('flipped');
+                    });
+                    
+                    container.appendChild(card);
+                }
+                
+                console.log(`已生成 ${container.children.length} 张卡片占位符`);
+                
+                // 加载第一批卡片
+                loadCards();
+                
+            } catch (error) {
+                console.error('生成卡片时出错:', error);
+            } finally {
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        // 加载指定范围的卡片
+        function loadCards() {
+            if (isLoading) return;
+            isLoading = true;
+            
+            const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
+            const endIndex = Math.min(startIndex + CARDS_PER_PAGE, TOTAL_CARDS);
+            
+            const cards = document.querySelectorAll('.card');
+            
+            for (let i = startIndex; i < endIndex; i++) {
+                if (i >= cards.length) break;
+                
+                const card = cards[i];
+                const cardNumber = parseInt(card.getAttribute('data-card-number'));
+                const isLoaded = card.getAttribute('data-loaded') === 'true';
+                
+                if (!isLoaded) {
+                    loadCardImages(card, cardNumber);
+                    card.setAttribute('data-loaded', 'true');
+                }
+            }
+            
+            currentPage++;
+            isLoading = false;
+            
+            // 显示加载更多按钮或检测滚动
+            updateLoadMoreButton();
+        }
+        
+        // 加载单个卡片的图片
+        function loadCardImages(card, cardNumber) {
+            const frontPlaceholder = card.querySelector('[data-side="A"]');
+            const backPlaceholder = card.querySelector('[data-side="B"]');
+            
+            // 从配置中获取图片路径
+            const frontImagePath = `${currentConfig.imagePath}${cardNumber}_A.jpg`;
+            const backImagePath = `${currentConfig.imagePath}${cardNumber}_B.jpg`;
+            const defaultImagePath = `${currentConfig.imagePath}${currentConfig.defaultImage}`;
+            
+            // 生成tag HTML
+            const tags = getCardTags(cardNumber);
+            const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            // 直接替换正面图片，使用onerror处理缺失情况
+            if (frontPlaceholder) {
+                frontPlaceholder.outerHTML = `
+                    <img src="${frontImagePath}" alt="卡片${cardNumber}正面" loading="lazy" 
+                         onerror="this.src='${defaultImagePath}'; this.style.opacity='0.7'; this.outerHTML='<div style=\\'position: relative; width: 100%; height: 100%;\\'><img src=\\'${defaultImagePath}\\' alt=\\'卡片${cardNumber}正面默认\\' loading=\\'lazy\\' style=\\'width: 100%; height: 100%; object-fit: cover; opacity: 0.7;\\'><div style=\\'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 14px; font-weight: bold; text-align: center; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 5px;\\'>卡片${cardNumber}<br>图片暂缺</div></div>';">
+                    <div class="card-number">${cardNumber}</div>
+                    <div class="card-tags">${tagHtml}</div>
+                    <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                `;
+            }
+            
+            // 直接替换背面图片，使用onerror处理缺失情况
+            if (backPlaceholder) {
+                backPlaceholder.outerHTML = `
+                    <img src="${backImagePath}" alt="卡片${cardNumber}背面" loading="lazy"
+                         onerror="this.src='${defaultImagePath}'; this.style.opacity='0.7'; this.outerHTML='<div style=\\'position: relative; width: 100%; height: 100%;\\'><img src=\\'${defaultImagePath}\\' alt=\\'卡片${cardNumber}背面默认\\' loading=\\'lazy\\' style=\\'width: 100%; height: 100%; object-fit: cover; opacity: 0.7;\\'><div style=\\'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 14px; font-weight: bold; text-align: center; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 5px;\\'>卡片${cardNumber}<br>背面暂缺</div></div>';">
+                    <div class="card-number">${cardNumber}</div>
+                    <div class="card-tags">${tagHtml}</div>
+                    <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
+                `;
+            }
+        }
+        
+        // 更新"加载更多"按钮状态
+        function updateLoadMoreButton() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const loadedCount = document.querySelectorAll('.card[data-loaded="true"]').length;
+            const t = translations[currentLanguage];
+            
+            if (loadMoreBtn) {
+                if (loadedCount >= TOTAL_CARDS) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'block';
+                    loadMoreBtn.textContent = `${t.loadMore} (${loadedCount}/${TOTAL_CARDS})`;
+                }
+            }
+        }
+        
+        // 搜索卡片
+        function searchCards() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card');
+            const noResults = document.getElementById('noResults');
+            
+            if (searchTerm === '') {
+                clearSearch();
+                return;
+            }
+            
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const tags = card.getAttribute('data-tags').toLowerCase();
+                const cardNumber = card.getAttribute('data-card-number');
+                
+                // 检查是否匹配tag或卡号
+                const matchesTag = tags.includes(searchTerm);
+                const matchesNumber = cardNumber.includes(searchTerm);
+                
+                if (matchesTag || matchesNumber) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            // 显示/隐藏无结果提示
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+        
+        // 清除搜索
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const cards = document.querySelectorAll('.card');
+            const noResults = document.getElementById('noResults');
+            
+            searchInput.value = '';
+            cards.forEach(card => {
+                card.classList.remove('hidden');
+            });
+            noResults.style.display = 'none';
+        }
+        
+        // 缩放状态
+        let scale = 1;
+        let lastDistance = 0;
+        let isZooming = false;
+        
+        // 打开模态框
+        function openModal(cardNumber, event) {
+            event.stopPropagation(); // 阻止事件冒泡，避免触发卡片翻转
+            
+            const modal = document.getElementById('cardModal');
+            const modalCard = document.getElementById('modalCard');
+            const tags = getCardTags(cardNumber);
+            const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            // 从配置中获取图片路径
+            const frontImagePath = `${currentConfig.imagePath}${cardNumber}_A.jpg`;
+            const backImagePath = `${currentConfig.imagePath}${cardNumber}_B.jpg`;
+            const defaultImagePath = `${currentConfig.imagePath}${currentConfig.defaultImage}`;
+            
+            // 为模态框图片添加时间戳
+            const modalTimestamp = Date.now() + cardNumber;
+            
+            modalCard.innerHTML = `
+                <div class="modal-card-inner">
+                    <div class="modal-card-front">
+                        <div class="modal-image-container">
+                            <div class="modal-image-wrapper">
+                                <img src="${frontImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}正面" loading="lazy" onerror="this.src='${defaultImagePath}?t=${modalTimestamp}'; this.onerror=function(){ this.outerHTML='<div style=\\'display: flex; justify-content: center; align-items: center; height: 100%; background: #f0f0f0; color: #666; font-size: 24px; font-weight: bold;\\'>图片加载失败</div>';}">
+                                <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #ff4757; font-size: 16px; font-weight: bold; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: none;" id="frontMissingText">
+                                    卡片${cardNumber}<br>图片暂缺
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                    </div>
+                    <div class="modal-card-back">
+                        <div class="modal-image-container">
+                            <div class="modal-image-wrapper">
+                                <img src="${backImagePath}?t=${modalTimestamp}" alt="卡片${cardNumber}背面" loading="lazy" onerror="this.src='${defaultImagePath}?t=${modalTimestamp}'; this.onerror=function(){ this.outerHTML='<div style=\\'display: flex; justify-content: center; align-items: center; height: 100%; background: #f0f0f0; color: #666; font-size: 24px; font-weight: bold;\\'>图片加载失败</div>';}">
+                                <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #ff4757; font-size: 16px; font-weight: bold; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: none;" id="backMissingText">
+                                    卡片${cardNumber}<br>背面暂缺
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-tags">${tagHtml}</div>
+                    </div>
+                </div>
+            `;
+            
+            // 重置缩放状态
+            scale = 1;
+            lastDistance = 0;
+            isZooming = false;
+            
+            // 添加翻转事件
+            modalCard.addEventListener('click', function() {
+                this.classList.toggle('flipped');
+            });
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+            
+            // 设置缩放事件监听
+            setupZoomListeners();
+        }
+        
+        // 设置缩放事件监听器
+        function setupZoomListeners() {
+            const imageContainers = document.querySelectorAll('.modal-image-container');
+            
+            imageContainers.forEach(container => {
+                const wrapper = container.querySelector('.modal-image-wrapper');
+                
+                // 触摸开始
+                container.addEventListener('touchstart', handleTouchStart, { passive: false });
+                
+                // 触摸移动
+                container.addEventListener('touchmove', handleTouchMove, { passive: false });
+                
+                // 触摸结束
+                container.addEventListener('touchend', handleTouchEnd, { passive: false });
+                
+                // 鼠标滚轮缩放
+                container.addEventListener('wheel', handleWheel, { passive: false });
+                
+                // 双击重置缩放
+                container.addEventListener('dblclick', resetZoom);
+            });
+        }
+        
+        // 处理触摸开始
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                isZooming = true;
+                lastDistance = getDistance(e.touches[0], e.touches[1]);
+            }
+        }
+        
+        // 处理触摸移动
+        function handleTouchMove(e) {
+            if (e.touches.length === 2 && isZooming) {
+                e.preventDefault();
+                
+                const currentDistance = getDistance(e.touches[0], e.touches[1]);
+                const scaleDelta = currentDistance / lastDistance;
+                
+                scale = Math.min(Math.max(scale * scaleDelta, 1), 5); // 限制缩放范围 1-5
+                lastDistance = currentDistance;
+                
+                applyZoom(e.currentTarget);
+            }
+        }
+        
+        // 处理触摸结束
+        function handleTouchEnd(e) {
+            isZooming = false;
+        }
+        
+        // 处理鼠标滚轮
+        function handleWheel(e) {
+            e.preventDefault();
+            
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            scale = Math.min(Math.max(scale * delta, 1), 5); // 限制缩放范围 1-5
+            
+            applyZoom(e.currentTarget);
+        }
+        
+        // 应用缩放
+        function applyZoom(container) {
+            const wrapper = container.querySelector('.modal-image-wrapper');
+            wrapper.style.transform = `scale(${scale})`;
+        }
+        
+        // 重置缩放
+        function resetZoom(e) {
+            scale = 1;
+            applyZoom(e.currentTarget);
+        }
+        
+        // 计算两点距离
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.getElementById('cardModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // 恢复滚动
+            
+            // 重置缩放状态
+            scale = 1;
+            lastDistance = 0;
+            isZooming = false;
+        }
+        
+        // 点击模态框背景关闭
+        document.getElementById('cardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // DOM加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置页面标题
+            updatePageTitle();
+            
+            // 清除之前的缓存和状态
+            currentPage = 1;
+            isLoading = false;
+            
+            // 强制重新生成卡片
+            generateCards();
+            
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchCards();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

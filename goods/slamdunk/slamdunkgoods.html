@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>SLAMDUNK谷子分类导览</title>
+    <link rel="stylesheet" href="../../../css/navigation.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fafafa;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Kaku Gothic Pro", "Yu Gothic", YuGothic, "Meiryo", "Simsun", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            width: 100%;
+            padding: 40px 20px;
+        }
+        
+        .page-title {
+            text-align: center;
+            color: #2c2c2c;
+            font-size: 40px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            animation: fadeInDown 0.8s ease-out;
+            letter-spacing: 1px;
+        }
+        
+        .page-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.2s;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .category-card {
+            aspect-ratio: 1/1;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #fff;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+        
+        .category-card:hover {
+            transform: scale(1.03) translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .category-image {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: grayscale(80%) brightness(0.9);
+            transition: all 0.4s ease;
+            transform-origin: center;
+        }
+        
+        .category-card:hover .category-image img {
+            filter: grayscale(0%) brightness(1);
+            transform: scale(1.1);
+        }
+        
+        .category-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 25px 15px;
+            background: linear-gradient(to top, rgba(45, 52, 54, 0.85), rgba(45, 52, 54, 0.4), transparent);
+            color: white;
+            font-size: 17px;
+            font-weight: 400;
+            text-align: center;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        
+        .category-card:hover .category-title {
+            background: linear-gradient(to top, rgba(45, 52, 54, 0.95), rgba(45, 52, 54, 0.6), transparent);
+        }
+        
+        .footer {
+            text-align: center;
+            color: #636e72;
+            padding: 40px 0;
+            font-size: 13px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .categories-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .categories-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            
+            .page-title {
+                font-size: 36px;
+            }
+            
+            .main-container {
+                padding: 20px 15px;
+            }
+            
+            .category-title {
+                font-size: 14px;
+                padding: 15px 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .page-subtitle {
+                font-size: 13px;
+            }
+            
+            .category-title {
+                font-size: 12px;
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="../../about.html">关于</a>
+        <a href="../../guestbook.html">留言</a>
+        <div class="language-switcher">
+            <div class="language-dropdown">
+                <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
+                    语言<span class="arrow">▼</span>
+                </button>
+                <div class="language-list" id="languageList" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
+                    <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">
+                        中文
+                    </button>
+                    <button class="language-option" data-lang="en" onclick="switchLanguage('en')">
+                        English
+                    </button>
+                    <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">
+                        日本語
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <h1 class="page-title">SLAMDUNK 谷子导览</h1>
+        <p class="page-subtitle">探索井上雄彦《灌篮高手》的精彩收藏世界</p>
+        <p class="page-subtitle" style="margin-bottom: 60px; font-size: 14px;">卡牌 · 手办 · 日历 · 徽章 · 杂志 · 漫画 · 十日后 · JUMP50周年 · TFSD大电影</p>
+        
+        <div class="categories-grid" id="categoriesGrid">
+            <!-- 分类卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <footer class="footer">
+            <p>© 2024 SLAMDUNK Museum - 井上雄彦作品收藏站 | Powered by CodeBuddy</p>
+        </footer>
+    </div>
+
+    <script>
+        // 分类数据配置
+        const CATEGORIES_DATA = [
+            {
+                key: 'cards',
+                titles: {
+                    zh: "卡牌",
+                    en: "Trading Cards",
+                    ja: "トレーディングカード"
+                },
+                descriptions: {
+                    zh: "收录了SLAMDUNK从1993年到1997年期间发行的各类官方卡牌，包括万代Carddass系列、AMADA PP卡等珍贵收藏品。",
+                    en: "Official trading cards from 1993-1997, including Bandai Carddass series and AMADA PP cards.",
+                    ja: "1993年から1997年までの公式トレーディングカード、バンダイカードダスシリーズやAMADA PPカードなどを収録。"
+                },
+                totalItems: 747,
+                yearRange: "1993-1997",
+                page: 'card/series-browser.html',
+                image: '../../../images/goods/goodscategory/category-cards.jpg',
+                icon: '🎴',
+                class: 'category-cards'
+            },
+            {
+                key: 'figures',
+                titles: {
+                    zh: "手办",
+                    en: "Figures",
+                    ja: "フィギュア"
+                },
+                descriptions: {
+                    zh: "高品质的SLAMDUNK角色手办系列，包括樱木花道、流川枫、赤木刚宪等主要人物的精美造型。",
+                    en: "High-quality character figures featuring Hanamichi, Rukawa, and other main characters.",
+                    ja: "桜木花道、流川楓、赤木剛憲など主要キャラクターの高品質フィギュアコレクション。"
+                },
+                totalItems: 45,
+                yearRange: "1994-2023",
+                page: 'figures/gallery.html',
+                image: '../../../images/goods/slamdunk/card/cardseries/1994carddass.jpg',
+                icon: '🗿',
+                class: 'category-figures'
+            },
+            {
+                key: 'calendars',
+                titles: {
+                    zh: "日历",
+                    en: "Calendars",
+                    ja: "カレンダー"
+                },
+                descriptions: {
+                    zh: "限量发行的SLAMDUNK官方日历，收录了井上雄彦原画和动画场景，极具收藏价值。",
+                    en: "Limited edition official calendars featuring Inoue Takehiko's artwork and anime scenes.",
+                    ja: "井上雄彦の原画とアニメシーンを収録した限定版公式カレンダー。"
+                },
+                totalItems: 12,
+                yearRange: "1993-2004",
+                page: 'calendars/gallery.html',
+                image: '../../../images/goods/slamdunk/card/cardseries/1993pp.jpg',
+                icon: '📅',
+                class: 'category-calendars'
+            },
+            {
+                key: 'badges',
+                titles: {
+                    zh: "徽章",
+                    en: "Badges",
+                    ja: "バッジ"
+                },
+                descriptions: {
+                    zh: "各式SLAMDUNK主题徽章和胸针，包括角色头像、球队标志、经典台词等设计。",
+                    en: "Various SLAMDUNK themed badges and pins featuring character portraits, team logos, and quotes.",
+                    ja: "キャラクターの顔、チームロゴ、名セリフなど様々なデザインのSLAMDUNKテーマバッジ。"
+                },
+                totalItems: 156,
+                yearRange: "1993-2005",
+                page: 'badges/gallery.html',
+                image: '../../../images/goods/slamdunk/card/cardseries/1997-cardass-masters.jpg',
+                icon: '🏅',
+                class: 'category-badges'
+            },
+            {
+                key: 'magazines',
+                titles: {
+                    zh: "少年JUMP杂志",
+                    en: "Weekly Shonen Jump",
+                    ja: "週刊少年ジャンプ"
+                },
+                descriptions: {
+                    zh: "收录SLAMDUNK连载期间的重要周刊少年Jump，包括经典封面、特辑和彩页。",
+                    en: "Weekly Shonen Jump issues during SLAMDUNK's serialization, including classic covers and special features.",
+                    ja: "SLAMDUNK連載期間の重要な週刊少年ジャンプ、クラシックカバーと特集を収録。"
+                },
+                totalItems: 276,
+                yearRange: "1990-1996",
+                page: 'magazines/gallery.html',
+                image: '../../../images/goods/slamdunk/card/cardseries/1994carddass.jpg',
+                icon: '📖',
+                class: 'category-magazines'
+            },
+            {
+                key: 'books',
+                titles: {
+                    zh: "单行本",
+                    en: "Manga Volumes",
+                    ja: "単行本"
+                },
+                descriptions: {
+                    zh: "SLAMDUNK完整单行本收藏，包括初版、特装版、文库版等各种版本。",
+                    en: "Complete SLAMDUNK manga collection including first editions, special editions, and paperback versions.",
+                    ja: "初版、特装版、文庫版などSLAMDUNKの完全単行本コレクション。"
+                },
+                totalItems: 31,
+                yearRange: "1991-2004",
+                page: 'books/gallery.html',
+                image: '../../../images/goods/slamdunk/card/cardseries/1993pp.jpg',
+                icon: '📚',
+                class: 'category-books'
+            },
+            {
+                key: '10days',
+                titles: {
+                    zh: "十日后",
+                    en: "10 Days After",
+                    ja: "10 DAYS after"
+                },
+                descriptions: {
+                    zh: "井上雄彦为纪念全国高中篮球锦标赛60周年创作的SLAMDUNK续篇彩页，讲述全国大赛结束10天后的故事。",
+                    en: "SLAMDUNK sequel created by Inoue Takehiko for the 60th anniversary, telling the story 10 days after the national championship.",
+                    ja: "全国高校バスケ選手権60周年記念として井上雄彦が描いたSLAMDUNK続編、全国大会終了から10日後の物語。"
+                },
+                totalItems: 23,
+                yearRange: "2004-2005",
+                page: '10days/gallery.html',
+                image: '../../../images/goods/slamdunk/card/cardseries/1997-cardass-masters.jpg',
+                icon: '🏀',
+                class: 'category-10days'
+            },
+            {
+                key: 'jump50',
+                titles: {
+                    zh: "JUMP50周年",
+                    en: "Jump 50th Anniversary",
+                    ja: "ジャンプ50周年"
+                },
+                descriptions: {
+                    zh: "为纪念周刊少年Jump创刊50周年，井上雄彦创作的全新SLAMDUNK彩页和特别插画。",
+                    en: "New SLAMDUNK color pages and special illustrations by Inoue Takehiko for Weekly Shonen Jump's 50th anniversary.",
+                    ja: "週刊少年ジャンプ創刊50周年記念、井上雄彦による全新SLAMDUNKカラーページと特別イラスト。"
+                },
+                totalItems: 8,
+                yearRange: "2018",
+                page: 'jump50/gallery.html',
+                image: '../../../images/goods/slamdunk/card/cardseries/1994carddass.jpg',
+                icon: '🎉',
+                class: 'category-jump50'
+            },
+            {
+                key: 'tfsd',
+                titles: {
+                    zh: "TFSD大电影",
+                    en: "THE FIRST SLAM DUNK",
+                    ja: "THE FIRST SLAM DUNK"
+                },
+                descriptions: {
+                    zh: "《灌篮高手》首部剧场版动画电影，于2022年12月上映，以全国大赛决赛为核心，重新制作了经典比赛的精彩场面。",
+                    en: "The first SLAMDUNK theatrical animated film, released in December 2022, focusing on the national championship finals with beautifully remade classic scenes.",
+                    ja: "『SLAMDUNK』初の劇場版アニメ映画、2022年12月公開。全国大会決勝戦を中心に、クラシックな試合場面を美麗に再制作。"
+                },
+                totalItems: 45,
+                yearRange: "2022-2023",
+                page: 'tfsd/gallery.html',
+                image: '../../../images/goods/goodscategory/tfsd.jpg',
+                icon: '🎬',
+                class: 'category-tfsd'
+            }
+        ];
+
+        // 语言设置
+        let currentLanguage = 'zh';
+        
+        // 初始化页面
+        function initPage() {
+            renderCategories();
+            setupLanguageToggle();
+            setupAnimations();
+        }
+        
+        // 渲染分类卡片
+        function renderCategories() {
+            const container = document.getElementById('categoriesGrid');
+            container.innerHTML = '';
+            
+            CATEGORIES_DATA.forEach((category, index) => {
+                const card = createCategoryCard(category, index);
+                container.appendChild(card);
+            });
+        }
+        
+        // 创建分类卡片
+        function createCategoryCard(category, index) {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            const title = category.titles[currentLanguage];
+            
+            card.innerHTML = `
+                <div class="category-image">
+                    <img src="${category.image}" alt="${title}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #667eea, #764ba2)'; this.parentElement.innerHTML='${category.icon}';">
+                    <div class="category-title">${title}</div>
+                </div>
+            `;
+            
+            // 添加点击事件
+            card.addEventListener('click', () => {
+                navigateToCategory(category.key);
+            });
+            
+            return card;
+        }
+        
+        // 导航到分类页面
+        function navigateToCategory(categoryKey) {
+            const category = CATEGORIES_DATA.find(c => c.key === categoryKey);
+            if (category && category.page) {
+                window.location.href = category.page;
+            } else {
+                // 如果页面不存在，显示提示
+                alert(`${category.titles[currentLanguage]}页面正在建设中，敬请期待！`);
+            }
+        }
+        
+        // 设置语言切换（未来功能）
+        function setupLanguageToggle() {
+            // 暂时隐藏语言切换功能
+            // 未来可以添加语言切换按钮
+        }
+        
+        // 设置动画效果
+        function setupAnimations() {
+            // 添加滚动动画观察器
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.category-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+    <script src="../../../js/navigation.js"></script>
+    <script>
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+
+            // Close dropdown
+            document.querySelector('.language-switcher').classList.remove('active');
+
+            // Update selected state in dropdown
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.lang === lang);
+            });
+
+            // Update titles and descriptions
+            document.querySelectorAll('.category-title').forEach((el, index) => {
+                const category = CATEGORIES_DATA[index];
+                if (category) {
+                    el.textContent = category.titles[lang];
+                }
+            });
+        }
+    </script>
+</body>
+</html>

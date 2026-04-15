@@ -1,0 +1,110 @@
+/* Top Navigation */
+.top-nav {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.top-nav a {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 2px;
+    opacity: 0.9;
+    transition: all 0.3s;
+    padding: 6px 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.top-nav a:hover {
+    opacity: 1;
+    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Language Switcher */
+.language-switcher {
+    position: relative;
+    font-size: 14px;
+}
+
+.language-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.language-btn {
+    padding: 8px 16px;
+    background: transparent;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 400;
+    letter-spacing: 2px;
+    border: none;
+    font-size: 14px;
+}
+
+.language-btn:hover {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.language-btn .arrow {
+    font-size: 10px;
+    margin-left: 6px;
+    transition: transform 0.3s;
+    opacity: 0.8;
+}
+
+.language-switcher.active .language-btn .arrow {
+    transform: rotate(180deg);
+}
+
+.language-list {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    min-width: 100px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.language-switcher.active .language-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.language-option {
+    display: block;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.language-option:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.language-option.selected {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}

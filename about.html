@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于 - About · 井上博物馆</title>
+    <link rel="stylesheet" href="css/navigation.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Kaku Gothic Pro", "Yu Gothic", YuGothic, "Meiryo", sans-serif;
+            background: #fafafa;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-container {
+            text-align: center;
+            padding: 60px 40px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            font-size: 24px;
+            color: #ff6b35;
+            font-weight: 400;
+            letter-spacing: 4px;
+            padding: 20px 40px;
+            display: inline-block;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .dots {
+            display: inline-block;
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { opacity: 0; }
+            40% { opacity: 1; }
+            60% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        p {
+            font-size: 14px;
+            color: #999;
+            letter-spacing: 2px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            letter-spacing: 2px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 26, 46, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="about.html">关于</a>
+        <a href="guestbook.html">留言</a>
+        <div class="language-switcher">
+            <div class="language-dropdown">
+                <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
+                    语言<span class="arrow">▼</span>
+                </button>
+                <div class="language-list" id="languageList" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
+                    <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">
+                        中文
+                    </button>
+                    <button class="language-option" data-lang="en" onclick="switchLanguage('en')">
+                        English
+                    </button>
+                    <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">
+                        日本語
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="about-container">
+        <span class="icon">ℹ️</span>
+        <h1>关于</h1>
+        <div class="status">更新中<span class="dots">...</span></div>
+        <p>About</p>
+        <a href="index.html" class="back-link">返回首页</a>
+    </div>
+</body>
+</html>

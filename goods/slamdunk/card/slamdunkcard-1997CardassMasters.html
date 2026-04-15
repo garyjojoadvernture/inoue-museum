@@ -16,11 +16,8 @@
         
         body {
             background: #fafafa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 80px 20px 20px;
             font-family: Arial, sans-serif;
             color: #333;
         }
@@ -29,12 +26,14 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            max-width: 1000px;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
         .card {
-            width: 240px;
-            height: 330px;
+            width: 100%;
+            aspect-ratio: 3/4;
             perspective: 1000px;
             cursor: pointer;
         }
@@ -515,9 +514,10 @@
         </div>
     </div>
 
+    <script src="card-config.js"></script>
     <script>
-        // 卡片总数 - 修改为145张卡片
-        const TOTAL_CARDS = 145;
+        // 从配置中获取卡片总数
+        let TOTAL_CARDS = currentConfig.totalCards;
         
         // 多语言文本
         const translations = {
@@ -559,244 +559,13 @@
         // 当前语言
         let currentLanguage = 'zh';
         
-        // 卡片tag数据（多语言）
-        const cardTags = {
-            zh: {
-                1: ["主角", "樱木花道"],
-                2: ["主角", "流川枫"],
-                3: ["主角", "赤木刚宪"],
-                4: ["主角", "宫城良田"],
-                5: ["主角", "三井寿"],
-                6: ["湘北", "队长"],
-                7: ["湘北", "得分手"],
-                8: ["湘北", "控球后卫"],
-                9: ["湘北", "三分射手"],
-                10: ["湘北", "篮板王"],
-                11: ["海南", "牧绅一"],
-                12: ["海南", "神宗一郎"],
-                13: ["海南", "清田信长"],
-                14: ["海南", "高砂一马"],
-                15: ["海南", "武藤正"],
-                16: ["翔阳", "藤真健司"],
-                17: ["翔阳", "花形透"],
-                18: ["翔阳", "永野满"],
-                19: ["翔阳", "长谷川一志"],
-                20: ["翔阳", "伊藤卓"],
-                21: ["陵南", "仙道彰"],
-                22: ["陵南", "鱼住纯"],
-                23: ["陵南", "福田吉兆"],
-                24: ["陵南", "越野宏明"],
-                25: ["陵南", "池上亮二"],
-                26: ["丰玉", "南烈"],
-                27: ["丰玉", "岸本实理"],
-                28: ["丰玉", "板仓大二郎"],
-                29: ["丰玉", "矢嶋京平"],
-                30: ["丰玉", "岩田三秋"],
-                31: ["山王", "河田雅史"],
-                32: ["山王", "泽北荣治"],
-                33: ["山王", "野边将宏"],
-                34: ["山王", "松本稔"],
-                35: ["山王", "深津一成"],
-                36: ["教练", "安西光义"],
-                37: ["教练", "高头力"],
-                38: ["教练", "田冈茂一"],
-                39: ["教练", "堂本五郎"],
-                40: ["教练", "相田彦一"],
-                41: ["经理", "赤木晴子"],
-                42: ["经理", "松井稔"],
-                43: ["经理", "岛村叶子"],
-                44: ["经理", "小暮"],
-                45: ["经理", "篮球队经理"],
-                46: ["友情", "团队"],
-                47: ["友情", "努力"],
-                48: ["友情", "成长"],
-                49: ["友情", "青春"],
-                50: ["友情", "梦想"],
-                51: ["比赛", "练习赛"],
-                52: ["比赛", "县大会"],
-                53: ["比赛", "全国大赛"],
-                54: ["比赛", "决赛"],
-                55: ["比赛", "关键时刻"],
-                56: ["技术", "灌篮"],
-                57: ["技术", "三分球"],
-                58: ["技术", "盖帽"],
-                59: ["技术", "抢断"],
-                60: ["技术", "运球"],
-                61: ["回忆", "训练"],
-                62: ["回忆", "休息室"],
-                63: ["回忆", "比赛日"],
-                64: ["回忆", "庆祝"],
-                65: ["回忆", "挑战"],
-                66: ["经典", "台词"],
-                67: ["经典", "场景"],
-                68: ["经典", "瞬间"],
-                69: ["经典", "对决"],
-                70: ["经典", "逆袭"],
-                71: ["特殊", "稀有"],
-                72: ["特殊", "限量"],
-                73: ["特殊", "签名"],
-                74: ["特殊", "珍藏"],
-                75: ["特殊", "黄金"]
-            },
-            en: {
-                1: ["Protagonist", "Hanamichi"],
-                2: ["Protagonist", "Kaede"],
-                3: ["Protagonist", "Takenori"],
-                4: ["Protagonist", "Mitsui"],
-                5: ["Protagonist", "Ryota"],
-                6: ["Shohoku", "Captain"],
-                7: ["Shohoku", "Scorer"],
-                8: ["Shohoku", "PointGuard"],
-                9: ["Shohoku", "Shooter"],
-                10: ["Shohoku", "Rebounder"],
-                11: ["Ryozan", "Akira"],
-                12: ["Ryozan", "Kenji"],
-                13: ["Ryozan", "Sinji"],
-                14: ["Ryozan", "Kazuma"],
-                15: ["Ryozan", "Tadashi"],
-                16: ["Shoyo", "Kenji"],
-                17: ["Shoyo", "Toru"],
-                18: ["Shoyo", "Mitsuru"],
-                19: ["Shoyo", "Kazushi"],
-                20: ["Shoyo", "Suguru"],
-                21: ["Ryonan", "Toru"],
-                22: ["Ryonan", "Jun"],
-                23: ["Ryonan", "Kiyoshi"],
-                24: ["Ryonan", "Hiroaki"],
-                25: ["Ryonan", "Ryoji"],
-                26: ["Toyotama", "Akira"],
-                27: ["Toyotama", "Masaharu"],
-                28: ["Toyotama", "Daijiro"],
-                29: ["Toyotama", "Kyosuke"],
-                30: ["Toyotama", "Mikihisa"],
-                31: ["Sannoh", "Masashi"],
-                32: ["Sannoh", "Eiji"],
-                33: ["Sannoh", "Masahiro"],
-                34: ["Sannoh", "Minoru"],
-                35: ["Sannoh", "Kazunari"],
-                36: ["Coach", "Anzai"],
-                37: ["Coach", "Takashi"],
-                38: ["Coach", "Moichi"],
-                39: ["Coach", "Goro"],
-                40: ["Coach", "Hikoichi"],
-                41: ["Manager", "Haruko"],
-                42: ["Manager", "Minoru"],
-                43: ["Manager", "Yoko"],
-                44: ["Manager", "Kogure"],
-                45: ["Manager", "TeamManager"],
-                46: ["Friendship", "Team"],
-                47: ["Friendship", "Effort"],
-                48: ["Friendship", "Growth"],
-                49: ["Friendship", "Youth"],
-                50: ["Friendship", "Dream"],
-                51: ["Match", "Practice"],
-                52: ["Match", "Prefectural"],
-                53: ["Match", "National"],
-                54: ["Match", "Final"],
-                55: ["Match", "Critical"],
-                56: ["Skill", "Dunk"],
-                57: ["Skill", "ThreePoint"],
-                58: ["Skill", "Block"],
-                59: ["Skill", "Steal"],
-                60: ["Skill", "Dribble"],
-                61: ["Memory", "Training"],
-                62: ["Memory", "LockerRoom"],
-                63: ["Memory", "GameDay"],
-                64: ["Memory", "Celebration"],
-                65: ["Memory", "Challenge"],
-                66: ["Classic", "Line"],
-                67: ["Classic", "Scene"],
-                68: ["Classic", "Moment"],
-                69: ["Classic", "Duel"],
-                70: ["Classic", "Comeback"],
-                71: ["Special", "Rare"],
-                72: ["Special", "Limited"],
-                73: ["Special", "Autograph"],
-                74: ["Special", "Collection"],
-                75: ["Special", "Gold"]
-            },
-            ja: {
-                1: ["主人公", "桜木花道"],
-                2: ["主人公", "流川楓"],
-                3: ["主人公", "赤木剛憲"],
-                4: ["主人公", "宮城リョータ"],
-                5: ["主人公", "三井寿"],
-                6: ["湘北", "主将"],
-                7: ["湘北", "得点屋"],
-                8: ["湘北", "ポイントガード"],
-                9: ["湘北", "シューター"],
-                10: ["湘北", "リバウンダー"],
-                11: ["海南", "牧紳一"],
-                12: ["海南", "神宗一郎"],
-                13: ["海南", "清田信長"],
-                14: ["海南", "高砂一馬"],
-                15: ["海南", "武藤正"],
-                16: ["翔陽", "藤真健司"],
-                17: ["翔陽", "花形透"],
-                18: ["翔陽", "永野満"],
-                19: ["翔陽", "長谷川一志"],
-                20: ["翔陽", "伊藤卓"],
-                21: ["陵南", "仙道彰"],
-                22: ["陵南", "魚住純"],
-                23: ["陵南", "福田吉兆"],
-                24: ["陵南", "越野宏明"],
-                25: ["陵南", "池上亮二"],
-                26: ["豊玉", "南烈"],
-                27: ["豊玉", "岸本実理"],
-                28: ["豊玉", "板倉大二郎"],
-                29: ["豊玉", "矢嶋京平"],
-                30: ["豊玉", "岩田三秋"],
-                31: ["山王", "河田雅史"],
-                32: ["山王", "沢北栄治"],
-                33: ["山王", "野辺将宏"],
-                34: ["山王", "松本稔"],
-                35: ["山王", "深津一成"],
-                36: ["監督", "安西光義"],
-                37: ["監督", "高頭力"],
-                38: ["監督", "田岡茂一"],
-                39: ["監督", "堂本五郎"],
-                40: ["監督", "相田彦一"],
-                41: ["マネージャー", "赤木晴子"],
-                42: ["マネージャー", "松井稔"],
-                43: ["マネージャー", "島村葉子"],
-                44: ["マネージャー", "木暮"],
-                45: ["マネージャー", "バスケ部マネージャー"],
-                46: ["友情", "チーム"],
-                47: ["友情", "努力"],
-                48: ["友情", "成長"],
-                49: ["友情", "青春"],
-                50: ["友情", "夢"],
-                51: ["試合", "練習試合"],
-                52: ["試合", "県大会"],
-                53: ["試合", "全国大会"],
-                54: ["試合", "決勝"],
-                55: ["試合", "重要場面"],
-                56: ["技術", "ダンク"],
-                57: ["技術", "スリーポイント"],
-                58: ["技術", "ブロック"],
-                59: ["技術", "スティール"],
-                60: ["技術", "ドリブル"],
-                61: ["思い出", "練習"],
-                62: ["思い出", "ロッカールーム"],
-                63: ["思い出", "試合日"],
-                64: ["思い出", "祝賀"],
-                65: ["思い出", "挑戦"],
-                66: ["名場面", "セリフ"],
-                67: ["名場面", "シーン"],
-                68: ["名場面", "瞬間"],
-                69: ["名場面", "対決"],
-                70: ["名場面", "逆転"],
-                71: ["特殊", "レア"],
-                72: ["特殊", "限定"],
-                73: ["特殊", "サイン"],
-                74: ["特殊", "コレクション"],
-                75: ["特殊", "ゴールド"]
-            }
-        };
+        // 卡片tag数据（从配置中获取）
+        let cardTags = currentConfig.cardTags;
         
         // 生成默认tags（对于没有定义的卡片）
         function generateDefaultTags(cardNumber, lang) {
             const tags = [];
+            const cardNum = parseInt(cardNumber) || 0; // 将cardNumber转换为数字，非数字则为0
             const tagMap = {
                 zh: ["湘北", "海南", "翔阳", "陵南", "丰玉", "山王", "教练", "经理", "友情", "比赛", "技术", "回忆", "经典", "特殊", "其他"],
                 en: ["Shohoku", "Ryozan", "Shoyo", "Ryonan", "Toyotama", "Sannoh", "Coach", "Manager", "Friendship", "Match", "Skill", "Memory", "Classic", "Special", "Other"],
@@ -809,37 +578,49 @@
                 ja: ["限定", "コレクション"]
             };
             
-            if (cardNumber <= 10) tags.push(tagMap[lang][0]);
-            else if (cardNumber <= 15) tags.push(tagMap[lang][1]);
-            else if (cardNumber <= 20) tags.push(tagMap[lang][2]);
-            else if (cardNumber <= 25) tags.push(tagMap[lang][3]);
-            else if (cardNumber <= 30) tags.push(tagMap[lang][4]);
-            else if (cardNumber <= 35) tags.push(tagMap[lang][5]);
-            else if (cardNumber <= 40) tags.push(tagMap[lang][6]);
-            else if (cardNumber <= 45) tags.push(tagMap[lang][7]);
-            else if (cardNumber <= 50) tags.push(tagMap[lang][8]);
-            else if (cardNumber <= 55) tags.push(tagMap[lang][9]);
-            else if (cardNumber <= 60) tags.push(tagMap[lang][10]);
-            else if (cardNumber <= 65) tags.push(tagMap[lang][11]);
-            else if (cardNumber <= 70) tags.push(tagMap[lang][12]);
-            else if (cardNumber <= 75) tags.push(tagMap[lang][13]);
+            if (cardNum <= 10) tags.push(tagMap[lang][0]);
+            else if (cardNum <= 15) tags.push(tagMap[lang][1]);
+            else if (cardNum <= 20) tags.push(tagMap[lang][2]);
+            else if (cardNum <= 25) tags.push(tagMap[lang][3]);
+            else if (cardNum <= 30) tags.push(tagMap[lang][4]);
+            else if (cardNum <= 35) tags.push(tagMap[lang][5]);
+            else if (cardNum <= 40) tags.push(tagMap[lang][6]);
+            else if (cardNum <= 45) tags.push(tagMap[lang][7]);
+            else if (cardNum <= 50) tags.push(tagMap[lang][8]);
+            else if (cardNum <= 55) tags.push(tagMap[lang][9]);
+            else if (cardNum <= 60) tags.push(tagMap[lang][10]);
+            else if (cardNum <= 65) tags.push(tagMap[lang][11]);
+            else if (cardNum <= 70) tags.push(tagMap[lang][12]);
+            else if (cardNum <= 75) tags.push(tagMap[lang][13]);
             else tags.push(tagMap[lang][14]);
             
-            if (cardNumber % 5 === 0) tags.push(limitedMap[lang][0]);
-            if (cardNumber % 10 === 0) tags.push(limitedMap[lang][1]);
+            if (cardNum % 5 === 0) tags.push(limitedMap[lang][0]);
+            if (cardNum % 10 === 0) tags.push(limitedMap[lang][1]);
             
             return tags;
         }
         
         // 获取卡片tags
         function getCardTags(cardNumber) {
-            return cardTags[currentLanguage][cardNumber] || generateDefaultTags(cardNumber, currentLanguage);
+            if (cardTags && cardTags[currentLanguage] && cardTags[currentLanguage][cardNumber]) {
+                return cardTags[currentLanguage][cardNumber];
+            }
+            return generateDefaultTags(cardNumber, currentLanguage);
         }
         
+        // 更新页面标题
+        function updatePageTitle() {
+            const title = currentConfig.title[currentLanguage];
+            document.title = title;
+        }
+
         // 语言切换函数
         function changeLanguage() {
             const selector = document.getElementById('languageSelector');
             currentLanguage = selector.value;
+            
+            // 更新页面标题
+            updatePageTitle();
             
             // 更新界面文本
             const t = translations[currentLanguage];
@@ -864,50 +645,54 @@
             generateCards();
         }
         
-        // 延迟加载配置 - 修改为12张卡片每页
-        const CARDS_PER_PAGE = 12;
+        // 延迟加载配置 - 从配置中获取
+        let CARDS_PER_PAGE = currentConfig.cardsPerPage;
         let currentPage = 1;
         let isLoading = false;
         
         // 生成卡片
-        async function generateCards() {
+        function generateCards() {
             const container = document.getElementById('cardsContainer');
             const loadingElement = document.getElementById('loading');
             
             try {
                 // 清空容器
                 container.innerHTML = '';
-                console.log(`开始生成 ${TOTAL_CARDS} 张卡片...`);
+                
+                // 使用 cardNumbers 数组获取实际存在的卡片编号
+                const cardNumbers = currentConfig.cardNumbers || [];
+                console.log(`开始生成 ${cardNumbers.length} 张卡片...`);
+                console.log('卡片编号:', cardNumbers);
                 
                 // 先生成所有卡片的占位符，但不加载图片
-                for (let i = 1; i <= TOTAL_CARDS; i++) {
+                cardNumbers.forEach((cardNumber, index) => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.setAttribute('data-tags', getCardTags(i).join(','));
-                    card.setAttribute('data-card-number', i);
+                    card.setAttribute('data-tags', getCardTags(cardNumber).join(','));
+                    card.setAttribute('data-card-number', cardNumber);
                     card.setAttribute('data-loaded', 'false'); // 标记是否已加载
                     
                     // 生成tag HTML
-                    const tags = getCardTags(i);
+                    const tags = getCardTags(cardNumber);
                     const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
                     
                     // 初始时使用占位符，不加载实际图片
                     card.innerHTML = `
                         <div class="card-inner">
                             <div class="card-front">
-                                <div class="card-placeholder" data-card-number="${i}" data-side="A">
+                                <div class="card-placeholder" data-card-number="${cardNumber}" data-side="A">
                                     <div class="placeholder-content">🏀</div>
-                                    <div class="card-number">${i}</div>
+                                    <div class="card-number">${cardNumber}</div>
                                     <div class="card-tags">${tagHtml}</div>
-                                    <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                    <div class="zoom-icon" onclick="openModal('${cardNumber}', event)"></div>
                                 </div>
                             </div>
                             <div class="card-back">
-                                <div class="card-placeholder" data-card-number="${i}" data-side="B">
+                                <div class="card-placeholder" data-card-number="${cardNumber}" data-side="B">
                                     <div class="placeholder-content">🏀</div>
-                                    <div class="card-number">${i}</div>
+                                    <div class="card-number">${cardNumber}</div>
                                     <div class="card-tags">${tagHtml}</div>
-                                    <div class="zoom-icon" onclick="openModal(${i}, event)"></div>
+                                    <div class="zoom-icon" onclick="openModal('${cardNumber}', event)"></div>
                                 </div>
                             </div>
                         </div>
@@ -919,12 +704,12 @@
                     });
                     
                     container.appendChild(card);
-                }
+                });
                 
                 console.log(`已生成 ${container.children.length} 张卡片占位符`);
                 
                 // 加载第一批卡片
-                await loadCards();
+                loadCards();
                 
             } catch (error) {
                 console.error('生成卡片时出错:', error);
@@ -933,25 +718,25 @@
             }
         }
         
-        // 加载指定范围的卡片
-        async function loadCards() {
+        // 加载卡片（每次加载一批）
+        function loadCards() {
             if (isLoading) return;
             isLoading = true;
             
-            const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
-            const endIndex = Math.min(startIndex + CARDS_PER_PAGE, TOTAL_CARDS);
-            
             const cards = document.querySelectorAll('.card');
+            const totalCards = cards.length;
+            const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
+            const endIndex = Math.min(startIndex + CARDS_PER_PAGE, totalCards);
             
             for (let i = startIndex; i < endIndex; i++) {
-                if (i >= cards.length) break;
-                
                 const card = cards[i];
-                const cardNumber = parseInt(card.getAttribute('data-card-number'));
+                if (!card) break;
+                
+                const cardNumber = card.getAttribute('data-card-number');
                 const isLoaded = card.getAttribute('data-loaded') === 'true';
                 
                 if (!isLoaded) {
-                    await loadCardImages(card, cardNumber);
+                    loadCardImages(card, cardNumber);
                     card.setAttribute('data-loaded', 'true');
                 }
             }
@@ -959,7 +744,6 @@
             currentPage++;
             isLoading = false;
             
-            // 显示加载更多按钮或检测滚动
             updateLoadMoreButton();
         }
         
@@ -974,74 +758,41 @@
         }
         
         // 加载单个卡片的图片
-        async function loadCardImages(card, cardNumber) {
+        function loadCardImages(card, cardNumber) {
             const frontPlaceholder = card.querySelector('[data-side="A"]');
             const backPlaceholder = card.querySelector('[data-side="B"]');
             
-            // 构建图片路径 - 使用绝对路径
-            const frontImagePath = `./images/card/1997CardassMasters/${cardNumber}_A.jpg`;
-            const backImagePath = `./images/card/1997CardassMasters/${cardNumber}_B.jpg`;
-            const defaultImagePath = `./images/card/1997CardassMasters/default.png`;
-            
-            // 为每张卡片添加唯一时间戳防止缓存
-            const timestamp = Date.now() + Math.random() + cardNumber;
+            // 构建图片路径 - 从配置中获取
+            const frontImagePath = `${currentConfig.imagePath}${cardNumber}_A.jpg`;
+            const backImagePath = `${currentConfig.imagePath}${cardNumber}_B.jpg`;
+            const defaultImagePath = `${currentConfig.imagePath}${currentConfig.defaultImage}`;
             
             // 生成tag HTML
             const tags = getCardTags(cardNumber);
             const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
             
-            // 检查正面图片是否存在
-            const frontExists = await checkImageExists(frontImagePath);
-            
+            // 直接用img标签替换占位符，加载失败时使用default图片
             if (frontPlaceholder) {
-                if (frontExists) {
-                    frontPlaceholder.outerHTML = `
-                        <img src="${frontImagePath}?v=${timestamp}" alt="卡片${cardNumber}正面" loading="lazy">
-                        <div class="card-number">${cardNumber}</div>
-                        <div class="card-tags">${tagHtml}</div>
-                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
-                    `;
-                } else {
-                    // 图片不存在，使用default.png
-                    frontPlaceholder.outerHTML = `
-                        <div style="position: relative; width: 100%; height: 100%;">
-                            <img src="${defaultImagePath}?v=${timestamp}" alt="卡片${cardNumber}正面默认" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 14px; font-weight: bold; text-align: center; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 5px;">
-                                卡片${cardNumber}<br>图片暂缺
-                            </div>
-                            <div class="card-number">${cardNumber}</div>
-                            <div class="card-tags">${tagHtml}</div>
-                            <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
-                        </div>
-                    `;
-                }
+                const frontHTML = `
+                    <img src="${frontImagePath}" alt="卡片${cardNumber}正面" loading="eager"
+                         onerror="this.src='${defaultImagePath}'; this.alt='卡片${cardNumber}正面(暂无图片)'">
+                    <div class="card-number">${cardNumber}</div>
+                    <div class="card-tags">${tagHtml}</div>
+                    <div class="zoom-icon" onclick="openModal('${cardNumber}', event)"></div>
+                `;
+                frontPlaceholder.outerHTML = frontHTML;
             }
             
-            // 检查背面图片是否存在
-            const backExists = await checkImageExists(backImagePath);
-            
+            // 直接用img标签替换背面占位符，加载失败时使用default图片
             if (backPlaceholder) {
-                if (backExists) {
-                    backPlaceholder.outerHTML = `
-                        <img src="${backImagePath}?v=${timestamp}" alt="卡片${cardNumber}背面" loading="lazy">
-                        <div class="card-number">${cardNumber}</div>
-                        <div class="card-tags">${tagHtml}</div>
-                        <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
-                    `;
-                } else {
-                    // 图片不存在，使用default.png
-                    backPlaceholder.outerHTML = `
-                        <div style="position: relative; width: 100%; height: 100%;">
-                            <img src="${defaultImagePath}?v=${timestamp}" alt="卡片${cardNumber}背面默认" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff4757; font-size: 14px; font-weight: bold; text-align: center; background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 5px;">
-                                卡片${cardNumber}<br>背面暂缺
-                            </div>
-                            <div class="card-number">${cardNumber}</div>
-                            <div class="card-tags">${tagHtml}</div>
-                            <div class="zoom-icon" onclick="openModal(${cardNumber}, event)"></div>
-                        </div>
-                    `;
-                }
+                const backHTML = `
+                    <img src="${backImagePath}" alt="卡片${cardNumber}背面" loading="eager"
+                         onerror="this.src='${defaultImagePath}'; this.alt='卡片${cardNumber}背面(暂无图片)'">
+                    <div class="card-number">${cardNumber}</div>
+                    <div class="card-tags">${tagHtml}</div>
+                    <div class="zoom-icon" onclick="openModal('${cardNumber}', event)"></div>
+                `;
+                backPlaceholder.outerHTML = backHTML;
             }
         }
         
@@ -1049,14 +800,15 @@
         function updateLoadMoreButton() {
             const loadMoreBtn = document.getElementById('loadMoreBtn');
             const loadedCount = document.querySelectorAll('.card[data-loaded="true"]').length;
+            const totalCards = (currentConfig.cardNumbers || []).length;
             const t = translations[currentLanguage];
             
             if (loadMoreBtn) {
-                if (loadedCount >= TOTAL_CARDS) {
+                if (loadedCount >= totalCards) {
                     loadMoreBtn.style.display = 'none';
                 } else {
                     loadMoreBtn.style.display = 'block';
-                    loadMoreBtn.textContent = `${t.loadMore} (${loadedCount}/${TOTAL_CARDS})`;
+                    loadMoreBtn.textContent = `${t.loadMore} (${loadedCount}/${totalCards})`;
                 }
             }
         }
@@ -1067,7 +819,7 @@
             console.warn(`${t.imageError} ${cardNumber}_${side}.jpg`);
             
             // 尝试加载默认图片
-            const defaultImagePath = './images/card/1997CardassMasters/default.png';
+            const defaultImagePath = '../../../images/goods/slamdunk/card/1997CardassMasters/default.png';
             const defaultImg = new Image();
             
             defaultImg.onload = function() {
@@ -1183,9 +935,10 @@
             const tags = getCardTags(cardNumber);
             const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
             
-            const frontImagePath = `./images/card/1997CardassMasters/${cardNumber}_A.jpg`;
-            const backImagePath = `./images/card/1997CardassMasters/${cardNumber}_B.jpg`;
-            const defaultImagePath = `./images/card/1997CardassMasters/default.png`;
+            // 从配置中获取图片路径
+            const frontImagePath = `${currentConfig.imagePath}${cardNumber}_A.jpg`;
+            const backImagePath = `${currentConfig.imagePath}${cardNumber}_B.jpg`;
+            const defaultImagePath = `${currentConfig.imagePath}${currentConfig.defaultImage}`;
             
             // 为模态框图片添加时间戳
             const modalTimestamp = Date.now() + cardNumber;
@@ -1373,7 +1126,7 @@
             console.warn(`${t.imageError} ${cardNumber}_${side}.jpg`);
             
             // 尝试加载默认图片
-            const defaultImagePath = './images/card/1997CardassMasters/default.png';
+            const defaultImagePath = '../../../images/goods/slamdunk/card/1997CardassMasters/default.png';
             const defaultImg = new Image();
             
             defaultImg.onload = function() {
@@ -1430,23 +1183,37 @@
             window.addEventListener('scroll', function() {
                 clearTimeout(scrollTimeout);
                 scrollTimeout = setTimeout(function() {
-                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const windowHeight = window.innerHeight;
-                    const documentHeight = document.documentElement.scrollHeight;
+                    const loadedCount = document.querySelectorAll('.card[data-loaded="true"]').length;
+                    const totalCards = (currentConfig.cardNumbers || []).length;
                     
-                    // 当滚动到距离底部200px时自动加载更多
-                    if (scrollTop + windowHeight >= documentHeight - 200) {
-                        const loadedCount = document.querySelectorAll('.card[data-loaded="true"]').length;
-                        if (loadedCount < TOTAL_CARDS && !isLoading) {
+                    if (loadedCount >= totalCards || isLoading) return;
+                    
+                    // 找到最后已加载的卡片
+                    const lastLoadedCard = document.querySelector(`.card[data-card-number="${getCardAtIndex(loadedCount - 1)}"]`);
+                    
+                    if (lastLoadedCard) {
+                        const rect = lastLoadedCard.getBoundingClientRect();
+                        // 如果最后已加载卡片进入视口（顶部在视口内或即将进入），就加载下一批
+                        // 即：当第36张卡片出现时，加载37-72
+                        if (rect.top <= window.innerHeight) {
                             loadCards();
                         }
                     }
-                }, 100); // 防抖处理，避免频繁触发
+                }, 50); // 防抖处理，避免频繁触发
             });
+        }
+        
+        // 根据索引获取卡片编号
+        function getCardAtIndex(index) {
+            const cardNumbers = currentConfig.cardNumbers || [];
+            return cardNumbers[index] || (index + 1);
         }
         
         // DOM加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
+            // 设置页面标题
+            updatePageTitle();
+            
             // 清除之前的缓存和状态
             currentPage = 1;
             isLoading = false;
