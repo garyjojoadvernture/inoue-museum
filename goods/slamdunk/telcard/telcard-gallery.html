@@ -421,10 +421,10 @@
             });
         }
 
-        // URL encode filename — normalize to NFD to match macOS filesystem encoding
+        // URL encode filename — try NFC first (GitHub Pages), fallback NFD (macOS local)
         function encodePath(path) {
             return path.split('/').map(function(s) {
-                return encodeURIComponent(s.normalize ? s.normalize('NFD') : s);
+                return encodeURIComponent(s.normalize ? s.normalize('NFC') : s);
             }).join('/');
         }
 
