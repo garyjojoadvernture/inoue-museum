@@ -1,82 +1,124 @@
-/* Top Navigation */
+/* ==========================================================================
+   Inoue Museum - Navigation
+   Minimalist horizontal text navigation
+   ========================================================================== */
+
+/* Top Navigation Bar */
 .top-nav {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border-light, #f0f0f0);
+}
+
+.top-nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 56px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    justify-content: center;
+    gap: 40px;
 }
 
-.top-nav a {
-    color: #333;
-    text-decoration: none;
+/* Site title in nav */
+.nav-site {
+    font-family: var(--font-serif, "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif);
     font-size: 14px;
-    letter-spacing: 2px;
-    opacity: 0.9;
-    transition: all 0.3s;
-    padding: 6px 14px;
-    border: 1px solid transparent;
-    border-radius: 4px;
+    letter-spacing: 3px;
+    color: var(--color-text, #1a1a1a);
+    text-decoration: none;
+    position: absolute;
+    left: 24px;
 }
 
-.top-nav a:hover {
+.nav-site:hover {
+    opacity: 0.6;
+}
+
+/* Nav links */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.nav-links a {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--color-text-secondary, #666);
+    text-decoration: none;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--color-text, #1a1a1a);
+    border-bottom-color: var(--color-text, #1a1a1a);
     opacity: 1;
-    border-color: rgba(0, 0, 0, 0.1);
-    background: rgba(0, 0, 0, 0.05);
+}
+
+.nav-links a.active {
+    color: var(--color-text, #1a1a1a);
+    border-bottom-color: var(--color-text, #1a1a1a);
 }
 
 /* Language Switcher */
 .language-switcher {
-    position: relative;
-    font-size: 14px;
+    position: absolute;
+    right: 24px;
 }
 
 .language-dropdown {
     position: relative;
-    display: inline-block;
 }
 
 .language-btn {
-    padding: 8px 16px;
-    background: transparent;
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-weight: 400;
-    letter-spacing: 2px;
+    background: none;
     border: none;
-    font-size: 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--color-text-light, #999);
+    cursor: pointer;
+    padding: 4px 0;
+    font-family: var(--font-sans, -apple-system, sans-serif);
+    transition: color 0.2s;
 }
 
 .language-btn:hover {
-    color: rgba(0, 0, 0, 0.7);
+    color: var(--color-text, #1a1a1a);
 }
 
 .language-btn .arrow {
-    font-size: 10px;
-    margin-left: 6px;
-    transition: transform 0.3s;
-    opacity: 0.8;
+    font-size: 8px;
+    margin-left: 4px;
+    display: inline-block;
+    transition: transform 0.2s;
 }
 
 .language-switcher.active .language-btn .arrow {
     transform: rotate(180deg);
 }
 
+/* Language Dropdown Menu */
 .language-list {
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 8px);
     right: 0;
-    background: rgba(0, 0, 0, 0.9);
-    min-width: 100px;
+    background: #fff;
+    border: 1px solid var(--color-border-light, #f0f0f0);
+    min-width: 80px;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
+    transform: translateY(-4px);
+    transition: all 0.2s ease;
 }
 
 .language-switcher.active .language-list {
@@ -87,24 +129,150 @@
 
 .language-option {
     display: block;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #fff;
-    text-decoration: none;
-    border: none;
-    background: none;
     width: 100%;
-    text-align: left;
-    font-size: 14px;
+    padding: 8px 16px;
+    font-size: 12px;
     letter-spacing: 1px;
+    color: var(--color-text-secondary, #666);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-sans, -apple-system, sans-serif);
+    transition: background 0.15s;
 }
 
 .language-option:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--color-bg-alt, #f9f9f9);
 }
 
 .language-option.selected {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    color: var(--color-text, #1a1a1a);
+}
+
+/* Mobile hamburger */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    position: absolute;
+    right: 24px;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--color-text, #1a1a1a);
+    margin: 5px 0;
+    transition: all 0.2s;
+}
+
+/* Mobile overlay */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-overlay.active {
+    display: flex;
+}
+
+.nav-overlay-links {
+    list-style: none;
+    text-align: center;
+}
+
+.nav-overlay-links li {
+    margin: 24px 0;
+}
+
+.nav-overlay-links a {
+    font-family: var(--font-serif, "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif);
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: var(--color-text, #1a1a1a);
+    text-decoration: none;
+    padding: 8px 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.nav-overlay-links a:hover {
+    border-bottom-color: var(--color-text, #1a1a1a);
+}
+
+.nav-close {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--color-text, #1a1a1a);
+    cursor: pointer;
+    padding: 8px;
+    line-height: 1;
+}
+
+.nav-overlay-lang {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    gap: 24px;
+}
+
+.nav-overlay-lang button {
+    background: none;
+    border: none;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--color-text-light, #999);
+    cursor: pointer;
+    padding: 4px 0;
+    font-family: var(--font-sans, -apple-system, sans-serif);
+}
+
+.nav-overlay-lang button.selected {
+    color: var(--color-text, #1a1a1a);
+    border-bottom: 1px solid var(--color-text, #1a1a1a);
+}
+
+/* Spacer for fixed nav */
+.nav-spacer {
+    height: 56px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .language-switcher {
+        display: none;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-site {
+        position: relative;
+        left: auto;
+    }
+
+    .top-nav-inner {
+        justify-content: flex-start;
+    }
 }

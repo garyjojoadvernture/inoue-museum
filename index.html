@@ -3,713 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>井上博物馆 - Inoue Museum</title>
+    <title>井上博物館 - Inoue Museum</title>
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/navigation.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Kaku Gothic Pro", "Yu Gothic", YuGothic, "Meiryo", sans-serif;
-            background: #fafafa;
-            color: #333;
-        }
-
-        /* Header - Logo */
-        header {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            padding: 60px 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .logo {
-            position: relative;
-            z-index: 1;
-        }
-
-        .logo h1 {
-            font-size: 48px;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: #fff;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .logo p {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: 3px;
-            font-weight: 300;
-        }
-
-        .logo-emoji {
-            font-size: 60px;
-            margin-bottom: 20px;
-            display: block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* Entrance Section */
-        .entrance-section {
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 300;
-            letter-spacing: 4px;
-            margin-bottom: 50px;
-            color: #1a1a2e;
-        }
-
-        .entrance-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-        }
-
-        .entrance-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px 30px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .entrance-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(247, 147, 30, 0.05) 100%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .entrance-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .entrance-card:hover::before {
-            opacity: 1;
-        }
-
-        .entrance-icon {
-            font-size: 50px;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .entrance-card h2 {
-            font-size: 24px;
-            font-weight: 400;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            color: #1a1a2e;
-        }
-
-        .entrance-card p {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.8;
-            letter-spacing: 1px;
-        }
-
-        .entrance-card:nth-child(1) .entrance-icon { color: #ff6b35; }
-        .entrance-card:nth-child(2) .entrance-icon { color: #4a90e2; }
-        .entrance-card:nth-child(3) .entrance-icon { color: #27ae60; }
-        .entrance-card:nth-child(4) .entrance-icon { color: #9b59b6; }
-        .entrance-card:nth-child(5) .entrance-icon { color: #e74c3c; }
-
-        /* Carousel Section */
-        .carousel-section {
-            padding: 80px 20px;
-            background: #f8f9fa;
-        }
-
-        .carousel-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .carousel-wrapper {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .carousel-slide {
-            min-width: 100%;
-            height: 400px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .carousel-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .carousel-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 30px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-            color: white;
-        }
-
-        .carousel-caption h3 {
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-        }
-
-        .carousel-caption p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .carousel-dots {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 10;
-        }
-
-        .carousel-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .carousel-dot.active {
-            background: #fff;
-            transform: scale(1.2);
-        }
-
-        .carousel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            color: #333;
-            transition: all 0.3s;
-            z-index: 10;
-        }
-
-        .carousel-arrow:hover {
-            background: #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .carousel-arrow.prev { left: 20px; }
-        .carousel-arrow.next { right: 20px; }
-
-        /* Links Section */
-        .links-section {
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-
-        .link-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            text-decoration: none;
-            color: #333;
-            transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .link-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .link-icon {
-            font-size: 32px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #ff6b35, #f7931e);
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .link-card:nth-child(2) .link-icon { background: linear-gradient(135deg, #4a90e2, #357abd); }
-        .link-card:nth-child(3) .link-icon { background: linear-gradient(135deg, #27ae60, #1e8449); }
-        .link-card:nth-child(4) .link-icon { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .link-card:nth-child(5) .link-icon { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-        .link-card:nth-child(6) .link-icon { background: linear-gradient(135deg, #f39c12, #d68910); }
-
-        .link-content h3 {
-            font-size: 18px;
-            font-weight: 400;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
-
-        .link-content p {
-            font-size: 13px;
-            color: #888;
-            line-height: 1.6;
-        }
-
-        /* Footer */
-        footer {
-            background: #1a1a2e;
-            color: rgba(255, 255, 255, 0.6);
-            text-align: center;
-            padding: 40px 20px;
-            font-size: 13px;
-            letter-spacing: 1px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .entrance-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .links-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                padding: 40px 20px;
-            }
-
-            .logo h1 {
-                font-size: 32px;
-                letter-spacing: 4px;
-            }
-
-            .entrance-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .links-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .carousel-slide {
-                height: 250px;
-            }
-
-            .entrance-section, .carousel-section, .links-section {
-                padding: 50px 20px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/carousel.css">
 </head>
 <body>
-    <!-- Top Navigation -->
+    <!-- Navigation -->
     <nav class="top-nav">
-        <a href="about.html" data-i18n="about">关于</a>
-        <a href="guestbook.html" data-i18n="guestbook">留言</a>
-        <div class="language-switcher">
-            <div class="language-dropdown">
-                <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
-                    语言<span class="arrow">▼</span>
-                </button>
-                <div class="language-list" id="languageList" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
-                    <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">
-                        中文
+        <div class="top-nav-inner">
+            <a href="index.html" class="nav-site" data-i18n="nav-site">井上博物館</a>
+            <div class="nav-links">
+                <a href="work/inouework.html" data-i18n="nav-works">作品</a>
+                <a href="goods/goods.html" data-i18n="nav-goods">收藏</a>
+                <a href="about.html" data-i18n="nav-about">关于</a>
+                <a href="guestbook.html" data-i18n="nav-guestbook">留言</a>
+            </div>
+            <div class="language-switcher">
+                <div class="language-dropdown">
+                    <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <span data-i18n="lang-label">语言</span><span class="arrow">&#9662;</span>
                     </button>
-                    <button class="language-option" data-lang="en" onclick="switchLanguage('en')">
-                        English
-                    </button>
-                    <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">
-                        日本語
-                    </button>
+                    <div class="language-list" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+                        <button class="language-option" data-lang="en" onclick="switchLanguage('en')">English</button>
+                        <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">日本語</button>
+                    </div>
                 </div>
             </div>
+            <button class="nav-toggle" onclick="openMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
+    <div class="nav-spacer"></div>
 
-    <!-- Header Logo -->
-    <header>
-        <div class="logo">
-            <span class="logo-emoji">🏀</span>
-            <h1 data-i18n="title">井上博物馆</h1>
-            <p data-i18n="subtitle">Inoue Museum · 井上博物館</p>
+    <!-- Mobile Overlay -->
+    <div class="nav-overlay" id="navOverlay">
+        <button class="nav-close" onclick="closeMobileMenu()">&times;</button>
+        <ul class="nav-overlay-links">
+            <li><a href="work/inouework.html" data-i18n="nav-works">作品</a></li>
+            <li><a href="goods/goods.html" data-i18n="nav-goods">收藏</a></li>
+            <li><a href="about.html" data-i18n="nav-about">关于</a></li>
+            <li><a href="guestbook.html" data-i18n="nav-guestbook">留言</a></li>
+        </ul>
+        <div class="nav-overlay-lang">
+            <button class="selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+            <button data-lang="en" onclick="switchLanguage('en')">EN</button>
+            <button data-lang="ja" onclick="switchLanguage('ja')">JP</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="section" style="padding-top: var(--spacing-xxl); padding-bottom: var(--spacing-xl); text-align: center;">
+        <div class="container">
+            <h1 data-i18n="title" style="font-size: 40px; margin-bottom: 12px;">井上博物館</h1>
+            <p class="subtitle" data-i18n="subtitle">INOUE MUSEUM &middot; 井上雄彦 Fan Museum</p>
+            <div class="divider" style="margin-top: 32px;"></div>
         </div>
     </header>
 
-    <!-- Entrance Section -->
-    <section class="entrance-section">
-        
-        <div class="entrance-grid">
-            <div class="entrance-card" onclick="location.href='work/inouework.html'">
-                <span class="entrance-icon">📚</span>
-                <h2 data-i18n="works">作品</h2>
-                <p data-i18n="works-desc">Works<br>漫画作品 · 经典系列</p>
-            </div>
-            <div class="entrance-card" onclick="location.href='goods/slamdunk/slamdunkgoods.html'">
-                <span class="entrance-icon">🎁</span>
-                <h2 data-i18n="goods">谷子</h2>
-                <p data-i18n="goods-desc">Goods Collection<br>周边收藏 · 纪念品</p>
-            </div>
-            <div class="entrance-card">
-                <span class="entrance-icon">📝</span>
-                <h2 data-i18n="interviews">专访</h2>
-                <p data-i18n="interviews-desc">Interviews<br>访谈录 · 独家专访</p>
-            </div>
-            <div class="entrance-card">
-                <span class="entrance-icon">📖</span>
-                <h2 data-i18n="diary">日记</h2>
-                <p data-i18n="diary-desc">Diary<br>ITP的BLOG · 井上雄彦的Twitter文章</p>
-            </div>
-            <div class="entrance-card">
-                <span class="entrance-icon">🎨</span>
-                <h2 data-i18n="fanart">同人</h2>
-                <p data-i18n="fanart-desc">Fan Art<br>粉丝创作 · 同人作品</p>
-            </div>
-        </div>
-    </section>
+    <!-- Carousel -->
+    <div id="carousel" class="carousel" style="margin-top: var(--spacing-md); margin-bottom: var(--spacing-lg);"></div>
 
-    <!-- Carousel Section -->
-    <section class="carousel-section">
-        
-        <div class="carousel-container">
-            <div class="carousel-wrapper" id="carouselWrapper">
-                <!-- Slide 1 -->
-                <div class="carousel-slide">
-                    <img src="images/homepage/carousel/1.jpg" alt="SLAM DUNK">
-                    <div class="carousel-caption">
-                        <h3>SLAM DUNK</h3>
-                        <p>湘北篮球队的热血青春</p>
+    <!-- Main Sections -->
+    <main class="container" style="max-width: 600px;">
+        <ul class="nav-list">
+            <li class="nav-list-item">
+                <a href="work/inouework.html">
+                    <div>
+                        <div class="nav-list-title" data-i18n="works">作品</div>
+                        <div class="nav-list-desc" data-i18n="works-desc">Works &mdash; 漫画作品年表</div>
                     </div>
-                </div>
-                <!-- Slide 2 -->
-                <div class="carousel-slide">
-                    <img src="images/homepage/carousel/2.jpg" alt="REAL">
-                    <div class="carousel-caption">
-                        <h3>REAL</h3>
-                        <p>井上雄彦的巅峰之作</p>
+                    <span class="nav-list-arrow">&rarr;</span>
+                </a>
+            </li>
+            <li class="nav-list-item">
+                <a href="goods/goods.html">
+                    <div>
+                        <div class="nav-list-title" data-i18n="goods">收藏</div>
+                        <div class="nav-list-desc" data-i18n="goods-desc">Collection &mdash; 周边与卡牌收藏</div>
                     </div>
-                </div>
-                <!-- Slide 3 -->
-                <div class="carousel-slide">
-                    <img src="images/homepage/carousel/3.jpg" alt="VAGABOND">
-                    <div class="carousel-caption">
-                        <h3>VAGABOND</h3>
-                        <p>宫本武藏的传奇人生</p>
+                    <span class="nav-list-arrow">&rarr;</span>
+                </a>
+            </li>
+            <li class="nav-list-item">
+                <a href="#">
+                    <div>
+                        <div class="nav-list-title" data-i18n="interviews">专访</div>
+                        <div class="nav-list-desc" data-i18n="interviews-desc">Interviews &mdash; 访谈与对话</div>
                     </div>
-                </div>
-                <!-- Slide 4 -->
-                <div class="carousel-slide">
-                    <img src="images/homepage/carousel/4.jpg" alt="BUZZER BEATER">
-                    <div class="carousel-caption">
-                        <h3>BUZZER BEATER</h3>
-                        <p>篮球与梦想的完美结合</p>
+                    <span class="nav-list-arrow">&rarr;</span>
+                </a>
+            </li>
+            <li class="nav-list-item">
+                <a href="#">
+                    <div>
+                        <div class="nav-list-title" data-i18n="diary">日记</div>
+                        <div class="nav-list-desc" data-i18n="diary-desc">Diary &mdash; 创作随笔</div>
                     </div>
-                </div>
-                <!-- Slide 5 -->
-                <div class="carousel-slide">
-                    <img src="images/homepage/carousel/5.jpg" alt="井上雄彦">
-                    <div class="carousel-caption">
-                        <h3>井上雄彦</h3>
-                        <p>漫画大师的创作世界</p>
+                    <span class="nav-list-arrow">&rarr;</span>
+                </a>
+            </li>
+            <li class="nav-list-item">
+                <a href="#">
+                    <div>
+                        <div class="nav-list-title" data-i18n="fanart">同人</div>
+                        <div class="nav-list-desc" data-i18n="fanart-desc">Fan Art &mdash; 粉丝创作</div>
                     </div>
-                </div>
-            </div>
-            <button class="carousel-arrow prev" onclick="prevSlide()">&#10094;</button>
-            <button class="carousel-arrow next" onclick="nextSlide()">&#10095;</button>
-            <div class="carousel-dots" id="carouselDots"></div>
-        </div>
-    </section>
+                    <span class="nav-list-arrow">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </main>
 
-    <!-- Links Section -->
-    <section class="links-section">
-        <h2 class="section-title" data-i18n="links">Links · 链接</h2>
-        <div class="links-grid">
-            <a href="https://www.itplanning.co.jp/inoue/" target="_blank" class="link-card">
-                <div class="link-icon">🌐</div>
-                <div class="link-content">
-                    <h3 data-i18n="official-site">井上雄彦官方网站</h3>
-                    <p data-i18n="official-site-desc">IT PLANNING · 最新资讯</p>
-                </div>
-            </a>
-            <a href="https://www.shonenjump.com/" target="_blank" class="link-card">
-                <div class="link-icon">📚</div>
-                <div class="link-content">
-                    <h3 data-i18n="shonen-jump">集英社 JUMP</h3>
-                    <p data-i18n="shonen-jump-desc">Shonen Jump · 少年漫画</p>
-                </div>
-            </a>
-            <a href="https://twitter.com/search?q=%E4%BA%95%E4%B8%8A%E9%9B%84%E5%BD%A6&src=typed_query" target="_blank" class="link-card">
-                <div class="link-icon">🐦</div>
-                <div class="link-content">
-                    <h3>Twitter</h3>
-                    <p data-i18n="twitter-desc">相关动态 · 粉丝讨论</p>
-                </div>
-            </a>
-            <a href="#" class="link-card">
-                <div class="link-icon">📺</div>
-                <div class="link-content">
-                    <h3>B站</h3>
-                    <p>相关视频 · UP主推荐</p>
-                </div>
-            </a>
-            <a href="#" class="link-card">
-                <div class="link-icon">💬</div>
-                <div class="link-content">
-                    <h3>豆瓣小组</h3>
-                    <p>粉丝社区 · 热门讨论</p>
-                </div>
-            </a>
-            <a href="#" class="link-card">
-                <div class="link-icon">🛍️</div>
-                <div class="link-content">
-                    <h3>购物网站</h3>
-                    <p>周边购买 · 收藏交流</p>
-                </div>
-            </a>
+    <!-- Links -->
+    <section class="section" style="margin-top: var(--spacing-lg);">
+        <div class="container" style="max-width: 600px;">
+            <h3 data-i18n="links" style="margin-bottom: var(--spacing-md); color: var(--color-text-secondary); font-family: var(--font-sans); font-size: 13px; letter-spacing: 3px;">LINKS</h3>
+            <ul class="nav-list">
+                <li class="nav-list-item">
+                    <a href="https://www.itplanning.co.jp/inoue/" target="_blank" rel="noopener">
+                        <div>
+                            <div class="nav-list-desc">IT PLANNING</div>
+                            <div style="font-size: 14px; margin-top: 2px;" data-i18n="link-official">井上雄彦官方网站</div>
+                        </div>
+                        <span class="nav-list-arrow">&nearr;</span>
+                    </a>
+                </li>
+                <li class="nav-list-item">
+                    <a href="https://www.shonenjump.com/" target="_blank" rel="noopener">
+                        <div>
+                            <div class="nav-list-desc">SHONEN JUMP</div>
+                            <div style="font-size: 14px; margin-top: 2px;" data-i18n="link-jump">集英社 周刊少年Jump</div>
+                        </div>
+                        <span class="nav-list-arrow">&nearr;</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer>
-        <p data-i18n="footer">© 2024 Inoue Museum · 井上博物馆</p>
-        <p style="margin-top: 10px; opacity: 0.5;" data-i18n="footer-sub">致敬井上雄彦先生的艺术创作</p>
+    <footer class="site-footer">
+        <div class="container">
+            <p data-i18n="footer">&copy; 2024 Inoue Museum</p>
+            <p style="margin-top: 4px; opacity: 0.5;" data-i18n="footer-sub">致敬井上雄彦先生的艺术创作</p>
+        </div>
     </footer>
 
+    <script src="carousel-config.js"></script>
+    <script src="js/carousel.js"></script>
     <script src="js/navigation.js"></script>
     <script>
-        // Multi-language translations
         const translations = {
             zh: {
-                title: '井上博物馆',
-                subtitle: 'Inoue Museum · 井上博物館',
-                about: '关于',
-                guestbook: '留言',
-                explore: 'Explore · 探索',
-                gallery: 'Gallery · 画廊',
-                links: 'Links · 链接',
-                works: '作品',
-                'works-desc': 'Works<br>漫画作品 · 经典系列',
-                goods: '谷子',
-                'goods-desc': 'Goods Collection<br>周边收藏 · 纪念品',
-                interviews: '专访',
-                'interviews-desc': 'Interviews<br>访谈录 · 独家专访',
-                diary: '日记',
-                'diary-desc': 'Diary<br>创作日记 · 每日更新',
-                fanart: '同人',
-                'fanart-desc': 'Fan Art<br>粉丝创作 · 同人作品',
-                'official-site': '井上雄彦官方网站',
-                'official-site-desc': 'IT PLANNING · 最新资讯',
-                'shonen-jump': '集英社 JUMP',
-                'shonen-jump-desc': 'Shonen Jump · 少年漫画',
-                'twitter-desc': '相关动态 · 粉丝讨论',
-                footer: '© 2024 Inoue Museum · 井上博物馆',
+                'nav-site': '井上博物館',
+                'title': '井上博物館',
+                'subtitle': 'INOUE MUSEUM · 井上雄彦 Fan Museum',
+                'nav-works': '作品',
+                'nav-goods': '收藏',
+                'nav-about': '关于',
+                'nav-guestbook': '留言',
+                'lang-label': '语言',
+                'works': '作品',
+                'works-desc': 'Works — 漫画作品年表',
+                'goods': '收藏',
+                'goods-desc': 'Collection — 周边与卡牌收藏',
+                'interviews': '专访',
+                'interviews-desc': 'Interviews — 访谈与对话',
+                'diary': '日记',
+                'diary-desc': 'Diary — 创作随笔',
+                'fanart': '同人',
+                'fanart-desc': 'Fan Art — 粉丝创作',
+                'links': 'LINKS',
+                'link-official': '井上雄彦官方网站',
+                'link-jump': '集英社 周刊少年Jump',
+                'footer': '© 2024 Inoue Museum',
                 'footer-sub': '致敬井上雄彦先生的艺术创作'
             },
             en: {
-                title: 'Inoue Museum',
-                subtitle: 'Inoue Museum · 井上博物館',
-                explore: 'Explore',
-                gallery: 'Gallery',
-                links: 'Links',
-                works: 'Works',
-                'works-desc': 'Works<br>Manga Series · Classics',
-                goods: 'Goods',
-                'goods-desc': 'Goods Collection<br>Merchandise',
-                interviews: 'Interviews',
-                'interviews-desc': 'Interviews<br>Exclusive Interviews',
-                diary: 'Diary',
-                'diary-desc': 'Diary<br>Daily Updates',
-                fanart: 'Fan Art',
-                'fanart-desc': 'Fan Art<br>Fan Creations',
-                'official-site': 'Official Site',
-                'official-site-desc': 'IT PLANNING · Latest News',
-                'shonen-jump': 'Shonen Jump',
-                'shonen-jump-desc': 'Shonen Jump · Weekly Shōnen Jump',
-                'twitter-desc': 'Updates · Fan Discussions',
-                footer: '© 2024 Inoue Museum',
-                'footer-sub': 'Tribute to Takehiko Inoue\'s artistic creation',
-                about: 'About',
-                guestbook: 'Guestbook'
+                'nav-site': 'Inoue Museum',
+                'title': 'Inoue Museum',
+                'subtitle': 'INOUE MUSEUM · A Fan Tribute to Takehiko Inoue',
+                'nav-works': 'Works',
+                'nav-goods': 'Collection',
+                'nav-about': 'About',
+                'nav-guestbook': 'Guestbook',
+                'lang-label': 'Lang',
+                'works': 'Works',
+                'works-desc': 'Manga timeline & bibliography',
+                'goods': 'Collection',
+                'goods-desc': 'Merchandise & card collection',
+                'interviews': 'Interviews',
+                'interviews-desc': 'Conversations & dialogues',
+                'diary': 'Diary',
+                'diary-desc': 'Creative essays & notes',
+                'fanart': 'Fan Art',
+                'fanart-desc': 'Fan creations',
+                'links': 'LINKS',
+                'link-official': 'Official Website',
+                'link-jump': 'Shueisha Weekly Shonen Jump',
+                'footer': '© 2024 Inoue Museum',
+                'footer-sub': 'A tribute to Takehiko Inoue\'s art'
             },
             ja: {
-                title: '井上博物館',
-                subtitle: '井上博物館 · Inoue Museum',
-                explore: 'Explore · 探索',
-                gallery: 'Gallery · ギャラリー',
-                links: 'Links · リンク',
-                works: '作品',
-                'works-desc': 'Works<br>漫画作品 · 经典シリーズ',
-                goods: 'グッズ',
-                'goods-desc': 'Goods Collection<br>コレクション',
-                interviews: 'インタビュー',
-                'interviews-desc': 'Interviews<br>独占インタビュー',
-                diary: '日記',
-                'diary-desc': 'Diary<br>毎日更新',
-                fanart: 'ファンアート',
-                'fanart-desc': 'Fan Art<br>ファン制作',
-                'official-site': '公式サイト',
-                'official-site-desc': 'IT PLANNING · 最新ニュース',
-                'shonen-jump': '集英社 JUMP',
-                'shonen-jump-desc': 'Shonen Jump · 少年ジャンプ',
-                'twitter-desc': '関連動向 · ファンディスカッション',
-                footer: '© 2024 井上博物館',
-                'footer-sub': '井上雄彦先生の芸術的创作に敬意を表します',
-                about: 'について',
-                guestbook: '掲示板'
+                'nav-site': '井上博物館',
+                'title': '井上博物館',
+                'subtitle': 'INOUE MUSEUM · 井上雄彦ファンミュージアム',
+                'nav-works': '作品',
+                'nav-goods': 'コレクション',
+                'nav-about': '紹介',
+                'nav-guestbook': '掲示板',
+                'lang-label': '言語',
+                'works': '作品',
+                'works-desc': '漫画作品年表',
+                'goods': 'コレクション',
+                'goods-desc': 'グッズとカードコレクション',
+                'interviews': 'インタビュー',
+                'interviews-desc': '対談とインタビュー',
+                'diary': '日記',
+                'diary-desc': '創作エッセイ',
+                'fanart': 'ファンアート',
+                'fanart-desc': 'ファン創作',
+                'links': 'LINKS',
+                'link-official': '井上雄彦公式サイト',
+                'link-jump': '集英社 週刊少年ジャンプ',
+                'footer': '© 2024 井上博物館',
+                'footer-sub': '井上雄彦先生の芸術創作に敬意を'
             }
         };
-
-        let currentLang = 'zh';
-
-        function switchLanguage(lang) {
-            currentLang = lang;
-            
-            // Close dropdown
-            document.querySelector('.language-switcher').classList.remove('active');
-            
-            // Update selected state in dropdown
-            document.querySelectorAll('.language-option').forEach(opt => {
-                opt.classList.toggle('selected', opt.dataset.lang === lang);
-            });
-            
-            // Update all translatable elements
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.dataset.i18n;
-                if (translations[lang][key]) {
-                    el.innerHTML = translations[lang][key];
-                }
-            });
-            
-            // Update document language
-            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : (lang === 'en' ? 'en' : 'ja');
-        }
-
-        // Carousel functionality
-        let currentSlide = 0;
-        const totalSlides = 5;
-        const wrapper = document.getElementById('carouselWrapper');
-        const dotsContainer = document.getElementById('carouselDots');
-
-        // Create dots
-        for (let i = 0; i < totalSlides; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-            dot.onclick = () => goToSlide(i);
-            dotsContainer.appendChild(dot);
-        }
-
-        function updateCarousel() {
-            wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-            document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateCarousel();
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            updateCarousel();
-        }
-
-        function goToSlide(index) {
-            currentSlide = index;
-            updateCarousel();
-        }
-
-        // Auto-play carousel
-        setInterval(nextSlide, 5000);
-
-        // Touch support for carousel
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        wrapper.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        wrapper.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            if (touchStartX - touchEndX > 50) {
-                nextSlide();
-            } else if (touchEndX - touchStartX > 50) {
-                prevSlide();
-            }
-        });
     </script>
 </body>
 </html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page-title">电话卡收藏 - Inoue Museum</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/navigation.css">
+    <style>
+        .back-link {
+            display: inline-block;
+            font-size: 13px;
+            color: var(--color-text-light);
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--color-text);
+            border-bottom-color: var(--color-text);
+            opacity: 1;
+        }
+
+        .series-header {
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .series-header h2 {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .series-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Gallery grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 24px;
+            max-width: 1080px;
+        }
+
+        /* Gallery item */
+        .gallery-item {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .gallery-item-img {
+            aspect-ratio: 2.5 / 3.5;
+            overflow: hidden;
+            background: var(--color-bg-alt);
+        }
+
+        .gallery-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(40%);
+            transition: filter 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-item-img img {
+            filter: grayscale(0%);
+        }
+
+        .gallery-item-title {
+            padding: 12px 0 0;
+            font-family: var(--font-serif);
+            font-size: 14px;
+            letter-spacing: 1px;
+            color: var(--color-text);
+            line-height: 1.4;
+        }
+
+        .gallery-item-index {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--color-text-light);
+            margin-top: 2px;
+            letter-spacing: 1px;
+        }
+
+        .gallery-count {
+            font-size: 13px;
+            color: var(--color-text-light);
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.96);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--color-text-light);
+            cursor: pointer;
+            z-index: 10;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--color-text);
+        }
+
+        /* Modal card with flip */
+        .modal-card {
+            width: 380px;
+            max-width: 85vw;
+            aspect-ratio: 2.5 / 3.5;
+            max-height: 72vh;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .modal-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s ease;
+            transform-style: preserve-3d;
+        }
+
+        .modal-card.flipped .modal-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .modal-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            overflow: hidden;
+            background: var(--color-bg-alt);
+        }
+
+        .modal-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-front {}
+
+        .modal-back {
+            transform: rotateY(180deg);
+        }
+
+        .modal-back-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-light);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        /* Flip button */
+        .modal-flip-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--color-text);
+            transition: all 0.2s;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-flip-btn:hover {
+            background: #fff;
+            transform: scale(1.1);
+        }
+
+        .modal-flip-btn.visible {
+            display: flex;
+        }
+
+        .modal-info {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+        }
+
+        .modal-index {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--color-text-light);
+            letter-spacing: 1px;
+        }
+
+        /* Nav buttons in modal */
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--color-text-secondary);
+            transition: all 0.2s;
+        }
+
+        .modal-nav:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--color-text);
+        }
+
+        .modal-prev { left: 24px; }
+        .modal-next { right: 24px; }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .modal-card {
+                width: 85vw;
+            }
+
+            .modal-nav {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .modal-prev { left: 8px; }
+            .modal-next { right: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <a href="../../../index.html" class="nav-site" data-i18n="nav-site">井上博物館</a>
+            <div class="nav-links">
+                <a href="../../../work/inouework.html" data-i18n="nav-works">作品</a>
+                <a href="../../../goods/goods.html" class="active" data-i18n="nav-goods">收藏</a>
+                <a href="../../../about.html" data-i18n="nav-about">关于</a>
+                <a href="../../../guestbook.html" data-i18n="nav-guestbook">留言</a>
+            </div>
+            <div class="language-switcher">
+                <div class="language-dropdown">
+                    <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <span data-i18n="lang-label">语言</span><span class="arrow">&#9662;</span>
+                    </button>
+                    <div class="language-list" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+                        <button class="language-option" data-lang="en" onclick="switchLanguage('en')">English</button>
+                        <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">日本語</button>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" onclick="openMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+    <div class="nav-spacer"></div>
+
+    <!-- Mobile Overlay -->
+    <div class="nav-overlay" id="navOverlay">
+        <button class="nav-close" onclick="closeMobileMenu()">&times;</button>
+        <ul class="nav-overlay-links">
+            <li><a href="../../../work/inouework.html" data-i18n="nav-works">作品</a></li>
+            <li><a href="../../../goods/goods.html" data-i18n="nav-goods">收藏</a></li>
+            <li><a href="../../../about.html" data-i18n="nav-about">关于</a></li>
+            <li><a href="../../../guestbook.html" data-i18n="nav-guestbook">留言</a></li>
+        </ul>
+        <div class="nav-overlay-lang">
+            <button class="selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+            <button data-lang="en" onclick="switchLanguage('en')">EN</button>
+            <button data-lang="ja" onclick="switchLanguage('ja')">JP</button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="container-wide section">
+        <a href="../slamdunkgoods.html" class="back-link" data-i18n="back">&larr; 返回 SLAM DUNK 收藏</a>
+
+        <div class="series-header">
+            <h2 id="seriesTitle"></h2>
+            <p class="series-desc" id="seriesDesc"></p>
+        </div>
+
+        <p class="gallery-count" id="galleryCount"></p>
+
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <button class="modal-nav modal-prev" onclick="navModal(-1)">&#8249;</button>
+        <button class="modal-nav modal-next" onclick="navModal(1)">&#8250;</button>
+        <div class="modal-card" id="modalCard">
+            <div class="modal-card-inner">
+                <div class="modal-face modal-front" id="modalFront"></div>
+                <div class="modal-face modal-back" id="modalBack"></div>
+            </div>
+            <button class="modal-flip-btn" id="flipBtn" onclick="flipCard(event)" title="Flip">↻</button>
+        </div>
+        <div class="modal-info">
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-index" id="modalIndex"></div>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic config loading with cache-bust, renders after config loads
+        var configLoaded = false;
+        (function() {
+            var s = document.createElement('script');
+            s.src = 'telcard-config.js?v=' + Date.now();
+            s.onload = function() {
+                configLoaded = true;
+                if (document.readyState !== 'loading') {
+                    renderHeader();
+                    renderGallery();
+                }
+            };
+            document.head.appendChild(s);
+        })();
+    </script>
+    <script src="../../../js/navigation.js"></script>
+    <script>
+        var currentModalIndex = 0;
+
+        // Get possible back image paths for a card
+        function getBackImagePath(card, frontImage) {
+            // 1) 如果配置文件中直接指定了 backImage，优先使用
+            if (card.backImage) return [card.backImage];
+
+            var dotIndex = frontImage.lastIndexOf('.');
+            if (dotIndex === -1) return [];
+
+            var base = frontImage.substring(0, dotIndex);
+            var ext = frontImage.substring(dotIndex);
+
+            // 2) 尝试多种命名方式（去重）
+            var seen = {};
+            var candidates = [
+                base + '_B' + ext,                    // 半角 _B
+                base + '＿B' + ext,                   // 全角 ＿B
+                base + '_b' + ext,                    // 小写 _b
+                base.replace('_A', '_B') + ext,       // _A → _B
+                base.replace('＿A', '＿B') + ext,     // 全角 ＿A → 全角 ＿B
+                base.replace('＿A', '_B') + ext,      // 全角 ＿A → 半角 _B
+                base.replace('_A', '＿B') + ext,      // 半角 _A → 全角 ＿B
+            ];
+            return candidates.filter(function(c) {
+                if (seen[c]) return false;
+                seen[c] = true;
+                return c !== frontImage;
+            });
+        }
+
+        // URL encode filename — normalize to NFD to match macOS filesystem encoding
+        function encodePath(path) {
+            return path.split('/').map(function(s) {
+                return encodeURIComponent(s.normalize ? s.normalize('NFD') : s);
+            }).join('/');
+        }
+
+        function getLang() {
+            // navigation.js sets documentElement.lang BEFORE dispatching langchange
+            var docLang = document.documentElement.lang;
+            var map = { 'zh-CN': 'zh', 'en': 'en', 'ja': 'ja', 'zh': 'zh' };
+            return map[docLang] || localStorage.getItem('inoue-lang') || 'zh';
+        }
+
+        function renderHeader() {
+            var lang = getLang();
+            var t = telcardConfig.title[lang] || telcardConfig.title.zh;
+            var d = telcardConfig.description ? (telcardConfig.description[lang] || telcardConfig.description.zh) : '';
+            document.getElementById('seriesTitle').textContent = t;
+            document.getElementById('seriesDesc').textContent = d;
+
+            var countLabel = {
+                zh: '共 ' + telcardConfig.cards.length + ' 张',
+                en: telcardConfig.cards.length + ' cards',
+                ja: '全 ' + telcardConfig.cards.length + ' 枚'
+            };
+            document.getElementById('galleryCount').textContent = countLabel[lang] || countLabel.zh;
+        }
+
+        function renderGallery() {
+            var grid = document.getElementById('galleryGrid');
+            var lang = getLang();
+            grid.innerHTML = '';
+
+            telcardConfig.cards.forEach(function(card, i) {
+                var item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.onclick = function() { openModal(i); };
+
+                var imgWrap = document.createElement('div');
+                imgWrap.className = 'gallery-item-img';
+                var img = document.createElement('img');
+                img.src = encodePath(telcardConfig.imagePath + card.image);
+                img.alt = card.title[lang] || '';
+                img.loading = 'lazy';
+                imgWrap.appendChild(img);
+                item.appendChild(imgWrap);
+
+                var title = document.createElement('div');
+                title.className = 'gallery-item-title';
+                title.textContent = card.title[lang] || '';
+                item.appendChild(title);
+
+                var index = document.createElement('div');
+                index.className = 'gallery-item-index';
+                index.textContent = 'No.' + (i + 1);
+                item.appendChild(index);
+
+                grid.appendChild(item);
+            });
+        }
+
+        function openModal(index) {
+            currentModalIndex = index;
+            updateModal();
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById('modalCard').classList.remove('flipped');
+            document.body.style.overflow = '';
+        }
+
+        function navModal(dir) {
+            var len = telcardConfig.cards.length;
+            currentModalIndex = ((currentModalIndex + dir) % len + len) % len;
+            document.getElementById('modalCard').classList.remove('flipped');
+            updateModal();
+        }
+
+        function updateModal() {
+            var lang = getLang();
+            var card = telcardConfig.cards[currentModalIndex];
+            var basePath = telcardConfig.imagePath;
+
+            // Front — URL-encode filename
+            var frontImg = document.createElement('img');
+            frontImg.src = encodePath(basePath + card.image);
+            frontImg.alt = card.title[lang] || '';
+            document.getElementById('modalFront').innerHTML = '';
+            document.getElementById('modalFront').appendChild(frontImg);
+
+            // Back — try each candidate using fetch (more reliable than Image.onerror with CJK)
+            var backContainer = document.getElementById('modalBack');
+            backContainer.innerHTML = '';
+            var flipBtn = document.getElementById('flipBtn');
+            flipBtn.classList.remove('visible');
+
+            var candidates = getBackImagePath(card, card.image);
+
+            function tryNextBack(idx) {
+                if (idx >= candidates.length) return;
+                var backPath = encodePath(basePath + candidates[idx]);
+                fetch(backPath, { method: 'HEAD' }).then(function(res) {
+                    if (res.ok) {
+                        var backImg = document.createElement('img');
+                        backImg.src = backPath;
+                        backImg.alt = '';
+                        backContainer.appendChild(backImg);
+                        flipBtn.classList.add('visible');
+                    } else {
+                        tryNextBack(idx + 1);
+                    }
+                }).catch(function() {
+                    tryNextBack(idx + 1);
+                });
+            }
+            tryNextBack(0);
+
+            // Reset flip state
+            document.getElementById('modalCard').classList.remove('flipped');
+
+            // Info
+            document.getElementById('modalTitle').textContent = card.title[lang] || '';
+            document.getElementById('modalIndex').textContent = 'No.' + (currentModalIndex + 1) + ' / ' + telcardConfig.cards.length;
+        }
+
+        function flipCard(event) {
+            event.stopPropagation();
+            document.getElementById('modalCard').classList.toggle('flipped');
+        }
+
+        // Click on modal card to flip (when back image exists)
+        document.getElementById('modalCard').addEventListener('click', function(e) {
+            if (e.target.closest('.modal-flip-btn')) return;
+            if (document.getElementById('flipBtn').classList.contains('visible')) {
+                this.classList.toggle('flipped');
+            }
+        });
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('modalOverlay').classList.contains('active')) return;
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') navModal(-1);
+            if (e.key === 'ArrowRight') navModal(1);
+            if (e.key === ' ' || e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                if (document.getElementById('flipBtn').classList.contains('visible')) {
+                    document.getElementById('modalCard').classList.toggle('flipped');
+                }
+            }
+        });
+
+        // Touch swipe in modal (swipe = navigate, tap = flip)
+        (function() {
+            var startX = 0;
+            var el = document.getElementById('modalOverlay');
+            el.addEventListener('touchstart', function(e) {
+                startX = e.changedTouches[0].clientX;
+            }, { passive: true });
+            el.addEventListener('touchend', function(e) {
+                if (e.target.closest('.modal-nav') || e.target.closest('.modal-close') || e.target.closest('.modal-flip-btn')) return;
+                var diff = e.changedTouches[0].clientX - startX;
+                if (Math.abs(diff) > 40) {
+                    navModal(diff < 0 ? 1 : -1);
+                }
+            }, { passive: true });
+        })();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (configLoaded) {
+                renderHeader();
+                renderGallery();
+            }
+        });
+
+        window.addEventListener('langchange', function() {
+            renderHeader();
+            renderGallery();
+            if (document.getElementById('modalOverlay').classList.contains('active')) {
+                updateModal();
+            }
+        });
+    </script>
+    <script>
+        const translations = {
+            zh: {
+                'nav-site': '井上博物館',
+                'nav-works': '作品',
+                'nav-goods': '收藏',
+                'nav-about': '关于',
+                'nav-guestbook': '留言',
+                'lang-label': '语言',
+                'back': '← 返回 SLAM DUNK 收藏',
+                'footer': '© 2024 Inoue Museum'
+            },
+            en: {
+                'nav-site': 'Inoue Museum',
+                'nav-works': 'Works',
+                'nav-goods': 'Collection',
+                'nav-about': 'About',
+                'nav-guestbook': 'Guestbook',
+                'lang-label': 'Lang',
+                'back': '← Back to SLAM DUNK',
+                'footer': '© 2024 Inoue Museum'
+            },
+            ja: {
+                'nav-site': '井上博物館',
+                'nav-works': '作品',
+                'nav-goods': 'コレクション',
+                'nav-about': '紹介',
+                'nav-guestbook': '掲示板',
+                'lang-label': '言語',
+                'back': '← SLAM DUNK コレクションに戻る',
+                'footer': '© 2024 井上博物館'
+            }
+        };
+    </script>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p data-i18n="footer">&copy; 2024 Inoue Museum</p>
+        </div>
+    </footer>
+</body>
+</html>

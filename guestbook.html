@@ -3,337 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>留言 - Guestbook · 井上博物馆</title>
+    <title data-i18n="page-title">留言 - Inoue Museum</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navigation.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Kaku Gothic Pro", "Yu Gothic", YuGothic, "Meiryo", sans-serif;
-            background: #fafafa;
-            color: #333;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        .guestbook-container {
-            max-width: 600px;
+        .form-container {
+            max-width: 480px;
             margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            display: block;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        h1 {
-            font-size: 36px;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: #1a1a2e;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 14px;
-            color: #999;
-            letter-spacing: 2px;
-        }
-
-        .form-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            padding: var(--spacing-xl) 24px;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: var(--spacing-md);
         }
 
-        label {
+        .form-group label {
             display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #333;
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--color-text-light);
             margin-bottom: 8px;
-            letter-spacing: 1px;
+            font-weight: 300;
         }
 
-        input,
-        textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.3s;
+            padding: 10px 0;
+            border: none;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 15px;
+            font-family: var(--font-sans);
+            color: var(--color-text);
+            background: transparent;
             outline: none;
-        }
-
-        input:focus,
-        textarea:focus {
-            border-color: #ff6b35;
-            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-        }
-
-        textarea {
-            min-height: 150px;
+            transition: border-color 0.2s;
             resize: vertical;
         }
 
-        input::placeholder,
-        textarea::placeholder {
-            color: #ccc;
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-bottom-color: var(--color-text);
         }
 
-        .submit-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--color-text-light);
+            font-weight: 300;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            line-height: 1.8;
+        }
+
+        .form-submit {
+            margin-top: var(--spacing-lg);
+        }
+
+        .form-submit button {
+            font-size: 13px;
             letter-spacing: 2px;
+            padding: 12px 32px;
+            border: 1px solid var(--color-text);
+            background: transparent;
+            color: var(--color-text);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
         }
 
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+        .form-submit button:hover {
+            background: var(--color-text);
+            color: var(--color-bg);
         }
 
-        .submit-btn:disabled {
-            background: #ccc;
+        .form-submit button:disabled {
+            opacity: 0.3;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
 
-        .success-message {
+        .form-success {
             display: none;
             text-align: center;
-            padding: 40px;
-            animation: fadeIn 0.5s ease-out;
+            padding: var(--spacing-xl) 0;
         }
 
-        .success-message.show {
+        .form-success.show {
             display: block;
         }
 
-        .success-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            display: block;
+        .form-success h2 {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            letter-spacing: 3px;
+            margin-bottom: var(--spacing-sm);
         }
 
-        .success-message h2 {
-            font-size: 28px;
-            font-weight: 400;
-            color: #27ae60;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .success-message p {
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            letter-spacing: 2px;
+        .form-success p {
             font-size: 14px;
-            transition: all 0.3s;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
         }
 
-        .back-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(26, 26, 46, 0.3);
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 12px;
-            color: #ccc;
+        .form-success a {
+            font-size: 13px;
+            letter-spacing: 1px;
+            color: var(--color-text-light);
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 2px;
         }
 
         @media (max-width: 768px) {
-            .form-card {
-                padding: 30px 20px;
-            }
-
-            h1 {
-                font-size: 28px;
-                letter-spacing: 4px;
+            .form-container {
+                padding: var(--spacing-lg) 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="guestbook-container">
-        <div class="header">
-            <span class="icon">💬</span>
-            <h1>留言板</h1>
-            <p>有任何想法或建议，欢迎留言告诉我</p>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <a href="index.html" class="nav-site" data-i18n="nav-site">井上博物館</a>
+            <div class="nav-links">
+                <a href="work/inouework.html" data-i18n="nav-works">作品</a>
+                <a href="goods/slamdunk/slamdunkgoods.html" data-i18n="nav-goods">收藏</a>
+                <a href="about.html" data-i18n="nav-about">关于</a>
+                <a href="guestbook.html" class="active" data-i18n="nav-guestbook">留言</a>
+            </div>
+            <div class="language-switcher">
+                <div class="language-dropdown">
+                    <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <span data-i18n="lang-label">语言</span><span class="arrow">&#9662;</span>
+                    </button>
+                    <div class="language-list" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+                        <button class="language-option" data-lang="en" onclick="switchLanguage('en')">English</button>
+                        <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">日本語</button>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" onclick="openMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
         </div>
+    </nav>
+    <div class="nav-spacer"></div>
 
-        <div class="form-card" id="formCard">
-            <!-- 
-                使用说明:
-                1. 访问 https://formspree.io/ 注册账号
-                2. 创建新表单,获取表单 URL (类似: https://formspree.io/f/xxxxx)
-                3. 将下面的 action 替换为你的表单 URL
-                4. 将 data-sitekey 替换为你的 site key
-            -->
-            <form 
-                id="contactForm"
-                action="https://formspree.io/f/mreqpdjd"
-                method="POST"
-            >
-                <div class="form-group">
-                    <label for="name">姓名</label>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
-                        placeholder="请输入您的姓名" 
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="email">邮箱</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="请输入您的邮箱" 
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="subject">主题</label>
-                    <input 
-                        type="text" 
-                        id="subject" 
-                        name="subject" 
-                        placeholder="请输入留言主题" 
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="message">留言内容</label>
-                    <textarea 
-                        id="message" 
-                        name="message" 
-                        placeholder="请输入您的留言内容..." 
-                        required
-                    ></textarea>
-                </div>
-
-                <button type="submit" class="submit-btn" id="submitBtn">发送留言</button>
-            </form>
-        </div>
-
-        <div class="success-message" id="successMessage">
-            <span class="success-icon">✅</span>
-            <h2>发送成功</h2>
-            <p>感谢您的留言，我会尽快回复您！</p>
-            <a href="index.html" class="back-link">返回首页</a>
-            <p style="margin-top: 20px; cursor: pointer; color: #ff6b35;" onclick="resetForm()">发送另一条留言</p>
-        </div>
-
-        <div class="footer">
-            <p>Powered by Formspree</p>
+    <!-- Mobile Overlay -->
+    <div class="nav-overlay" id="navOverlay">
+        <button class="nav-close" onclick="closeMobileMenu()">&times;</button>
+        <ul class="nav-overlay-links">
+            <li><a href="work/inouework.html" data-i18n="nav-works">作品</a></li>
+            <li><a href="goods/slamdunk/slamdunkgoods.html" data-i18n="nav-goods">收藏</a></li>
+            <li><a href="about.html" data-i18n="nav-about">关于</a></li>
+            <li><a href="guestbook.html" data-i18n="nav-guestbook">留言</a></li>
+        </ul>
+        <div class="nav-overlay-lang">
+            <button class="selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+            <button data-lang="en" onclick="switchLanguage('en')">EN</button>
+            <button data-lang="ja" onclick="switchLanguage('ja')">JP</button>
         </div>
     </div>
 
+    <!-- Form -->
+    <div class="form-container">
+        <div class="page-header" style="padding: var(--spacing-lg) 0;">
+            <h1 data-i18n="title" style="font-size: 28px;">留言</h1>
+            <p class="subtitle" data-i18n="subtitle">Guestbook</p>
+        </div>
+
+        <div id="formCard">
+            <form id="contactForm" action="https://formspree.io/f/mreqpdjd" method="POST">
+                <div class="form-group">
+                    <label for="name" data-i18n="label-name">姓名</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" data-i18n="label-email">邮箱</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject" data-i18n="label-subject">主题</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message" data-i18n="label-message">留言</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <div class="form-submit">
+                    <button type="submit" id="submitBtn" data-i18n="submit">发送</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-success" id="formSuccess">
+            <h2 data-i18n="success-title">已发送</h2>
+            <p data-i18n="success-desc">感谢您的留言</p>
+            <a href="index.html" data-i18n="back-home">返回首页</a>
+        </div>
+    </div>
+
+    <script src="js/navigation.js"></script>
     <script>
-        const form = document.getElementById('contactForm');
-        const formCard = document.getElementById('formCard');
-        const successMessage = document.getElementById('successMessage');
-        const submitBtn = document.getElementById('submitBtn');
+        const translations = {
+            zh: {
+                'nav-site':'井上博物館','nav-works':'作品','nav-goods':'收藏','nav-about':'关于','nav-guestbook':'留言','lang-label':'语言',
+                'title':'留言','subtitle':'Guestbook',
+                'label-name':'姓名','label-email':'邮箱','label-subject':'主题','label-message':'留言',
+                'submit':'发送','success-title':'已发送','success-desc':'感谢您的留言','back-home':'返回首页',
+                'footer':'© 2024 Inoue Museum'
+            },
+            en: {
+                'nav-site':'Inoue Museum','nav-works':'Works','nav-goods':'Collection','nav-about':'About','nav-guestbook':'Guestbook','lang-label':'Lang',
+                'title':'Guestbook','subtitle':'Leave a message',
+                'label-name':'Name','label-email':'Email','label-subject':'Subject','label-message':'Message',
+                'submit':'Send','success-title':'Sent','success-desc':'Thank you for your message','back-home':'Back to home',
+                'footer':'© 2024 Inoue Museum'
+            },
+            ja: {
+                'nav-site':'井上博物館','nav-works':'作品','nav-goods':'コレクション','nav-about':'紹介','nav-guestbook':'掲示板','lang-label':'言語',
+                'title':'掲示板','subtitle':'メッセージを残す',
+                'label-name':'名前','label-email':'メール','label-subject':'件名','label-message':'メッセージ',
+                'submit':'送信','success-title':'送信完了','success-desc':'メッセージありがとうございます','back-home':'トップへ',
+                'footer':'© 2024 井上博物館'
+            }
+        };
 
-        form.addEventListener('submit', function(e) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = '发送中...';
-        });
-
-        form.addEventListener('submit', async function(e) {
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = '...';
 
             try {
-                const response = await fetch(form.action, {
-                    method: form.method,
-                    body: new FormData(form),
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                const res = await fetch(this.action, {
+                    method: this.method,
+                    body: new FormData(this),
+                    headers: { 'Accept': 'application/json' }
                 });
 
-                if (response.ok) {
-                    formCard.style.display = 'none';
-                    successMessage.classList.add('show');
+                if (res.ok) {
+                    document.getElementById('formCard').style.display = 'none';
+                    document.getElementById('formSuccess').classList.add('show');
                 } else {
-                    alert('发送失败，请稍后重试');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '发送留言';
+                    alert('Error. Please try again.');
+                    btn.disabled = false;
+                    btn.textContent = translations[currentLang]?.submit || 'Send';
                 }
-            } catch (error) {
-                alert('发送失败，请稍后重试');
-                submitBtn.disabled = false;
-                submitBtn.textContent = '发送留言';
+            } catch (err) {
+                alert('Error. Please try again.');
+                btn.disabled = false;
+                btn.textContent = translations[currentLang]?.submit || 'Send';
             }
         });
-
-        function resetForm() {
-            form.reset();
-            formCard.style.display = 'block';
-            successMessage.classList.remove('show');
-            submitBtn.disabled = false;
-            submitBtn.textContent = '发送留言';
-        }
     </script>
 </body>
 </html>

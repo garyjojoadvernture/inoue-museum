@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page-title">收藏 - Inoue Museum</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <style>
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+            max-width: 900px;
+            margin: 0 auto var(--spacing-xl);
+        }
+
+        .work-card {
+            background: var(--color-bg-alt);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            aspect-ratio: 1 / 1;
+        }
+
+        .work-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .work-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(40%);
+            transition: filter 0.3s ease;
+        }
+
+        .work-card:hover img {
+            filter: grayscale(0%);
+        }
+
+        .work-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 20px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            color: #fff;
+        }
+
+        .work-card-title {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .work-card-subtitle {
+            font-size: 12px;
+            letter-spacing: 2px;
+            opacity: 0.85;
+        }
+
+        .work-card-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg-alt);
+            border: 1px dashed var(--color-border);
+        }
+
+        .work-card-empty span {
+            font-size: 13px;
+            color: var(--color-text-light);
+            letter-spacing: 1px;
+        }
+
+        .category-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .category-title {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            letter-spacing: 3px;
+            color: var(--color-text-light);
+            font-weight: 300;
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+        }
+
+        .other-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--spacing-md);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .other-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border-light);
+            padding: var(--spacing-lg) var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .other-card:hover {
+            border-color: var(--color-text);
+            transform: translateY(-2px);
+        }
+
+        .other-card-icon {
+            font-size: 32px;
+            margin-bottom: var(--spacing-sm);
+            opacity: 0.6;
+        }
+
+        .other-card-title {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .other-card-desc {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .works-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+
+            .other-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-sm);
+            }
+
+            .work-card {
+                aspect-ratio: 1 / 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <a href="../index.html" class="nav-site" data-i18n="nav-site">井上博物館</a>
+            <div class="nav-links">
+                <a href="../work/inouework.html" data-i18n="nav-works">作品</a>
+                <a href="goods.html" class="active" data-i18n="nav-goods">收藏</a>
+                <a href="../about.html" data-i18n="nav-about">关于</a>
+                <a href="../guestbook.html" data-i18n="nav-guestbook">留言</a>
+            </div>
+            <div class="language-switcher">
+                <div class="language-dropdown">
+                    <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <span data-i18n="lang-label">语言</span><span class="arrow">&#9662;</span>
+                    </button>
+                    <div class="language-list" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+                        <button class="language-option" data-lang="en" onclick="switchLanguage('en')">English</button>
+                        <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">日本語</button>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" onclick="openMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+    <div class="nav-spacer"></div>
+
+    <!-- Mobile Overlay -->
+    <div class="nav-overlay" id="navOverlay">
+        <button class="nav-close" onclick="closeMobileMenu()">&times;</button>
+        <ul class="nav-overlay-links">
+            <li><a href="../work/inouework.html" data-i18n="nav-works">作品</a></li>
+            <li><a href="goods.html" data-i18n="nav-goods">收藏</a></li>
+            <li><a href="../about.html" data-i18n="nav-about">关于</a></li>
+            <li><a href="../guestbook.html" data-i18n="nav-guestbook">留言</a></li>
+        </ul>
+        <div class="nav-overlay-lang">
+            <button class="selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+            <button data-lang="en" onclick="switchLanguage('en')">EN</button>
+            <button data-lang="ja" onclick="switchLanguage('ja')">JP</button>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 data-i18n="title">收藏</h1>
+            <p class="subtitle" data-i18n="subtitle">Merchandise & Collection</p>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="container section" style="padding-top: 0;">
+        <!-- Works Section -->
+        <div class="category-section">
+            <h3 class="category-title" data-i18n="cat-works">WORKS</h3>
+            <div class="works-grid" id="worksGrid">
+                <!-- 由 goods-config.js 动态渲染 -->
+            </div>
+        </div>
+
+        <!-- Other Categories -->
+        <div class="category-section">
+            <h3 class="category-title" data-i18n="cat-other">OTHER COLLECTIONS</h3>
+            <div class="other-grid" id="otherGrid">
+                <!-- 由 goods-config.js 动态渲染 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p data-i18n="footer">&copy; 2024 Inoue Museum</p>
+        </div>
+    </footer>
+
+    <script src="goods-config.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script>
+        // 渲染作品分类
+        function renderWorks() {
+            const grid = document.getElementById('worksGrid');
+            const lang = window.currentLang || 'zh';
+            grid.innerHTML = '';
+
+            goodsConfig.works.forEach(function(item) {
+                const a = document.createElement('a');
+                a.className = 'work-card' + (item.image ? '' : ' work-card-empty');
+                a.href = item.link || '#';
+
+                if (item.image) {
+                    const img = document.createElement('img');
+                    img.src = item.image;
+                    img.alt = item.subtitle || '';
+                    img.loading = 'lazy';
+                    a.appendChild(img);
+
+                    const overlay = document.createElement('div');
+                    overlay.className = 'work-card-overlay';
+
+                    const title = document.createElement('div');
+                    title.className = 'work-card-title';
+                    title.textContent = (item.title && item.title[lang]) || item.subtitle || '';
+                    overlay.appendChild(title);
+
+                    const subtitle = document.createElement('div');
+                    subtitle.className = 'work-card-subtitle';
+                    subtitle.textContent = item.subtitle || '';
+                    overlay.appendChild(subtitle);
+
+                    a.appendChild(overlay);
+                } else {
+                    const span = document.createElement('span');
+                    span.textContent = (item.title && item.title[lang]) || item.subtitle || '';
+                    a.appendChild(span);
+                }
+
+                grid.appendChild(a);
+            });
+        }
+
+        // 渲染其它分类
+        function renderOthers() {
+            const grid = document.getElementById('otherGrid');
+            const lang = window.currentLang || 'zh';
+            grid.innerHTML = '';
+
+            goodsConfig.others.forEach(function(item) {
+                const a = document.createElement('a');
+                a.className = 'other-card';
+                a.href = item.link || '#';
+
+                const icon = document.createElement('div');
+                icon.className = 'other-card-icon';
+                icon.textContent = item.icon || '';
+                a.appendChild(icon);
+
+                const title = document.createElement('div');
+                title.className = 'other-card-title';
+                title.textContent = (item.title && item.title[lang]) || '';
+                a.appendChild(title);
+
+                const desc = document.createElement('div');
+                desc.className = 'other-card-desc';
+                desc.textContent = (item.desc && item.desc[lang]) || '';
+                a.appendChild(desc);
+
+                grid.appendChild(a);
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderWorks();
+            renderOthers();
+        });
+
+        // 语言切换时重新渲染
+        window.addEventListener('langchange', function() {
+            renderWorks();
+            renderOthers();
+        });
+    </script>
+    <script>
+        const translations = {
+            zh: {
+                'nav-site': '井上博物館',
+                'nav-works': '作品',
+                'nav-goods': '收藏',
+                'nav-about': '关于',
+                'nav-guestbook': '留言',
+                'lang-label': '语言',
+                'title': '收藏',
+                'subtitle': 'Merchandise & Collection',
+                'cat-works': 'WORKS',
+                'cat-other': 'OTHER COLLECTIONS',
+                'footer': '© 2024 Inoue Museum'
+            },
+            en: {
+                'nav-site': 'Inoue Museum',
+                'nav-works': 'Works',
+                'nav-goods': 'Collection',
+                'nav-about': 'About',
+                'nav-guestbook': 'Guestbook',
+                'lang-label': 'Lang',
+                'title': 'Collection',
+                'subtitle': 'Merchandise & Collection',
+                'cat-works': 'WORKS',
+                'cat-other': 'OTHER COLLECTIONS',
+                'footer': '© 2024 Inoue Museum'
+            },
+            ja: {
+                'nav-site': '井上博物館',
+                'nav-works': '作品',
+                'nav-goods': 'コレクション',
+                'nav-about': '紹介',
+                'nav-guestbook': '掲示板',
+                'lang-label': '言語',
+                'title': 'コレクション',
+                'subtitle': 'グッズとコレクション',
+                'cat-works': 'WORKS',
+                'cat-other': 'OTHER COLLECTIONS',
+                'footer': '© 2024 井上博物館'
+            }
+        };
+    </script>
+</body>
+</html>

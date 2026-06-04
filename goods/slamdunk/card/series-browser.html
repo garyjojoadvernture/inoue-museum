@@ -3,485 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>SLAMDUNK卡片系列导览</title>
+    <title>SLAMDUNK Card Series</title>
+    <link rel="stylesheet" href="../../../css/style.css">
     <link rel="stylesheet" href="../../../css/navigation.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .back-link {
+            display: inline-block;
+            font-size: 13px;
+            color: var(--color-text-light);
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
         }
 
-        body {
-            background: #ffffff;
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Kaku Gothic Pro", "Yu Gothic", YuGothic, "Meiryo", sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #1d1d1f;
-        }
-        
-        .main-container {
-            max-width: 1200px;
-            width: 100%;
-            padding: 40px 20px;
-        }
-        
-        .page-title {
-            text-align: center;
-            color: #1d1d1f;
-            font-size: 48px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            animation: fadeInDown 0.8s ease-out;
-            letter-spacing: -0.5px;
+        .back-link:hover {
+            color: var(--color-text);
+            border-bottom-color: var(--color-text);
+            opacity: 1;
         }
 
-        .page-subtitle {
-            text-align: center;
-            color: #86868b;
-            font-size: 18px;
-            margin-bottom: 50px;
-            animation: fadeInUp 0.8s ease-out 0.2s;
-            font-weight: 400;
+        .series-list {
+            list-style: none;
         }
-        
-        .series-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-        
-        .series-card {
-            background: #f5f5f7;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: all 0.3s ease;
+
+        .series-entry {
+            border-bottom: 1px solid var(--color-border-light);
             cursor: pointer;
-            animation: fadeInUp 0.8s ease-out;
+            transition: opacity 0.2s;
         }
 
-        .series-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        .series-entry:hover {
+            opacity: 0.6;
         }
-        
-        .series-image {
-            width: 100%;
-            height: 280px;
-            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+
+        .series-entry-inner {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 60px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 2/3; /* 竖构图比例，模拟实际卡片 */
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) 0;
+            align-items: flex-start;
         }
-        
-        .series-image img {
+
+        .series-thumb {
+            width: 80px;
+            height: 110px;
+            flex-shrink: 0;
+            overflow: hidden;
+            background: var(--color-bg-alt);
+        }
+
+        .series-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
-            transition: transform 0.3s ease;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        
-        .series-card:hover .series-image img {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        
-        .series-image::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(255,255,255,0.1) 10px,
-                rgba(255,255,255,0.1) 20px
-            );
-            animation: shimmer 3s infinite;
-        }
-        
-        .series-content {
-            padding: 25px;
-        }
-        
-        .series-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1d1d1f;
-            margin-bottom: 15px;
-            letter-spacing: -0.3px;
+            filter: grayscale(40%);
+            transition: filter 0.3s;
         }
 
-        .series-description {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #86868b;
-            margin-bottom: 20px;
-            max-height: 120px;
-            overflow-y: auto;
-            font-weight: 400;
-        }
-        
-        .series-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid #e8eaed;
-        }
-        
-        .stat-item {
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1d1d1f;
+        .series-entry:hover .series-thumb img {
+            filter: grayscale(0%);
         }
 
-        .stat-label {
+        .series-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .series-info h3 {
+            font-family: var(--font-serif);
+            font-size: 17px;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .series-info .meta {
+            font-family: var(--font-mono);
             font-size: 12px;
-            color: #86868b;
-            margin-top: 5px;
-            font-weight: 400;
-        }
-        
-        .explore-btn {
-            background: #0071e3;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 980px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 20px;
+            color: var(--color-text-light);
+            margin-bottom: 8px;
         }
 
-        .explore-btn:hover {
-            background: #0077ed;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-        }
-        
-        .explore-btn:active {
-            transform: translateY(0);
-        }
-        
-        .language-selector {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(255,255,255,0.9);
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
+        .series-info .desc {
             font-size: 14px;
-            color: #1d1d1f;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .language-selector:hover {
-            background: rgba(255,255,255,1);
-            transform: translateY(-1px);
-        }
-        
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-        
-        /* 响应式设计 */
         @media (max-width: 768px) {
-            .series-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
+            .series-thumb {
+                width: 60px;
+                height: 80px;
             }
-            
-            .page-title {
-                font-size: 36px;
+
+            .series-info h3 {
+                font-size: 15px;
             }
-            
-            .page-subtitle {
-                font-size: 16px;
-            }
-            
-            .series-description {
-                max-height: 100px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .main-container {
-                padding: 20px 10px;
-            }
-            
-            .series-content {
-                padding: 20px;
-            }
-            
-            .series-title {
-                font-size: 20px;
+
+            .series-info .desc {
+                -webkit-line-clamp: 2;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Top Navigation -->
+    <!-- Navigation -->
     <nav class="top-nav">
-        <a href="../../../about.html">关于</a>
-        <a href="../../../guestbook.html">留言</a>
-        <div class="language-switcher">
-            <div class="language-dropdown">
-                <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
-                    语言<span class="arrow">▼</span>
-                </button>
-                <div class="language-list" id="languageList" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
-                    <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">
-                        中文
+        <div class="top-nav-inner">
+            <a href="../../../index.html" class="nav-site">井上博物館</a>
+            <div class="nav-links">
+                <a href="../../../work/inouework.html" data-i18n="nav-works">作品</a>
+                <a href="../slamdunkgoods.html" class="active" data-i18n="nav-goods">收藏</a>
+                <a href="../../../about.html" data-i18n="nav-about">关于</a>
+                <a href="../../../guestbook.html" data-i18n="nav-guestbook">留言</a>
+            </div>
+            <div class="language-switcher">
+                <div class="language-dropdown">
+                    <button class="language-btn" onmouseover="showLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <span data-i18n="lang-label">语言</span><span class="arrow">&#9662;</span>
                     </button>
-                    <button class="language-option" data-lang="en" onclick="switchLanguage('en')">
-                        English
-                    </button>
-                    <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">
-                        日本語
-                    </button>
+                    <div class="language-list" onmouseover="keepLanguageMenu()" onmouseout="hideLanguageMenu()">
+                        <button class="language-option selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+                        <button class="language-option" data-lang="en" onclick="switchLanguage('en')">English</button>
+                        <button class="language-option" data-lang="ja" onclick="switchLanguage('ja')">日本語</button>
+                    </div>
                 </div>
             </div>
+            <button class="nav-toggle" onclick="openMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
+    <div class="nav-spacer"></div>
 
-    <div class="main-container">
-        <h1 class="page-title">SLAMDUNK 卡片系列</h1>
-        <p class="page-subtitle">探索经典的灌篮高手卡片收藏系列</p>
-        
-        <div class="series-grid" id="seriesGrid">
-            <!-- 系列卡片将通过JavaScript动态生成 -->
+    <!-- Mobile Overlay -->
+    <div class="nav-overlay" id="navOverlay">
+        <button class="nav-close" onclick="closeMobileMenu()">&times;</button>
+        <ul class="nav-overlay-links">
+            <li><a href="../../../work/inouework.html" data-i18n="nav-works">作品</a></li>
+            <li><a href="../slamdunkgoods.html" data-i18n="nav-goods">收藏</a></li>
+            <li><a href="../../../about.html" data-i18n="nav-about">关于</a></li>
+            <li><a href="../../../guestbook.html" data-i18n="nav-guestbook">留言</a></li>
+        </ul>
+        <div class="nav-overlay-lang">
+            <button class="selected" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+            <button data-lang="en" onclick="switchLanguage('en')">EN</button>
+            <button data-lang="ja" onclick="switchLanguage('ja')">JP</button>
         </div>
     </div>
 
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 data-i18n="title">SLAMDUNK 卡片系列</h1>
+            <p class="subtitle" data-i18n="subtitle">Card Collection Series</p>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="container section" style="padding-top: 0; max-width: 680px;">
+        <a href="../slamdunkgoods.html" class="back-link" data-i18n="back">&larr; 返回收藏</a>
+        <ul class="series-list" id="seriesList"></ul>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p data-i18n="footer">&copy; 2024 Inoue Museum</p>
+        </div>
+    </footer>
+
+    <script src="../../../js/navigation.js"></script>
     <script>
-        // 系列数据 - 直接在HTML中维护
         const SERIES_DATA = [
             {
                 key: '1997CardassMasters',
-                titles: {
-                    zh: "1997 Cardass Masters系列",
-                    en: "1997 Cardass Masters Series",
-                    ja: "1997 カードダスマスターズシリーズ"
-                },
+                titles: { zh: '1997 Cardass Masters系列', en: '1997 Cardass Masters Series', ja: '1997 カードダスマスターズ' },
                 descriptions: {
-                    zh: "1997年推出的《灌篮高手》Cardass Masters系列是Bandai发行的集换式卡片游戏中的经典之作。该系列共145张卡片，涵盖了樱木花道、流川枫等主要角色，以及比赛中的经典场景和瞬间。每张卡片都采用精美的插图设计，正面展示角色形象，背面呈现游戏技能和属性，是当时《灌篮高手》爱好者的重要收藏品。",
-                    en: "The 1997 SLAMDUNK Cardass Masters series, released by Bandai, is a classic collectible card game. This series features 145 cards covering main characters like Hanamichi Sakuragi and Kaede Rukawa, with exquisite illustrations and game mechanics.",
-                    ja: "1997年発売の『SLAMDUNK』カードダスマスターズシリーズは、バンダイが発売した交換式カードゲームの傑作です。全145枚のカードで構成され、桜木花道や流川楓などの主要キャラクターをカバーしています。"
+                    zh: '1997年推出的Cardass Masters系列是Bandai发行的经典集换式卡片游戏。共145张卡片，涵盖主要角色及比赛经典场景。',
+                    en: 'The 1997 Cardass Masters series by Bandai is a classic collectible card game with 145 cards featuring main characters and iconic match scenes.',
+                    ja: '1997年発売のカードダスマスターズシリーズはバンダイの交換式カードゲーム。全145枚、主要キャラクターと試合の名場面を収録。'
                 },
                 totalCards: 145,
                 year: 1997,
-                page: 'slamdunkcard-1997CardassMasters.html',
-                image: '../../../images/goods/slamdunk/card/cardseries/1997-cardass-masters.jpg'
+                page: 'card-gallery.html',
+                series: '1997CardassMasters',
+                image: '../../../images/goods/slamdunk/card/cardseries/1997-cardass-masters.png'
             },
             {
-                key: '1994carddass',
-                titles: {
-                    zh: "1994 SLAMDUNK BANDAI CARDDASS 激斗卡",
-                    en: "1994 SLAMDUNK BANDAI CARDDASS Cards",
-                    ja: "1994 SLAMDUNK バンダイカードダスカード"
-                },
+                key: '1994CardassSlamDunk',
+                titles: { zh: '1994 CARDDASS 激斗卡', en: '1994 CARDDASS Battle Cards', ja: '1994 カードダス激闘カード' },
                 descriptions: {
-                    zh: "SLAMDUNK（灌篮高手）的Carddass激斗卡系列是万代公司于1994-1995年期间推出的官方卡牌产品，由东映动画授权制作。该系列以《灌篮高手》TV动画内容为基础，共推出了6弹，总计252张卡片，每弹包含36张普通卡和6张闪卡。",
-                    en: "SLAMDUNK Carddass cards series released by Bandai in 1994-1995, authorized by Toei Animation. Based on the SLAMDUNK TV animation, this series launched 6 sets with a total of 252 cards, each set containing 36 regular cards and 6 foil cards.",
-                    ja: "SLAMDUNKのカードダスカードシリーズは、1994-1995年にバンダイが発売した公式カード製品です。東映アニメーションによるライセンス制作。このシリーズは『SLAMDUNK』TVアニメーションをベースにし、全6弾、計252枚のカードを発売し、各弾は36枚の通常カードと6枚のホイルカードを含みます。"
+                    zh: '万代于1994-1995年推出的官方卡牌产品，共6弹252张卡片，以TV动画内容为基础。',
+                    en: 'Official card product by Bandai (1994-1995), 6 sets with 252 cards based on the TV anime.',
+                    ja: '1994-1995年にバンダイが発売した公式カード製品。全6弾252枚、TVアニメベース。'
                 },
                 totalCards: 252,
                 year: 1994,
-                page: 'slamdunkcard-seriesB.html',
+                page: 'card-gallery.html',
+                series: '1994CardassSlamDunk',
                 image: '../../../images/goods/slamdunk/card/cardseries/1994carddass.jpg'
             },
             {
-                key: '1993PP',
-                titles: {
-                    zh: "1993 SLAMDUNK AMADA PP卡",
-                    en: "1993 SLAMDUNK AMADA PP Cards",
-                    ja: "1993 SLAMDUNK アマダPPカード"
-                },
+                key: 'ppcard',
+                titles: { zh: '1993 AMADA PP卡', en: '1993 AMADA PP Cards', ja: '1993 アマダPPカード' },
                 descriptions: {
-                    zh: "SLAMDUNK（灌篮高手）的PP卡系列是日本天田印刷株式会社（AMADA）于1993-1994年发行的官方卡牌产品，由集英社、电通、东映动画、朝日电视台联合授权制作。该系列共发行三弹，总计146张卡片。全系列合计30张闪卡、8张银卡、108张普通卡。",
-                    en: "SLAMDUNK PP card series is an official card product released by Japan AMADA Co., Ltd. in 1993-1994, jointly authorized by Shueisha, Dentsu, Toei Animation, and TV Asahi. This series released three sets with a total of 146 cards, including 30 foil cards, 8 silver cards, and 108 regular cards.",
-                    ja: "SLAMDUNK PPカードシリーズは、1993-1994年に日本天田印刷株式会社（AMADA）が発売した公式カード製品です。集英社、電通、東映アニメーション、テレビ朝日による共同ライセンス制作。このシリーズは3弾を発売し、計146枚のカード。全シリーズで計30枚のホイルカード、8枚のシルバーカード、108枚の通常カードを含みます。"
+                    zh: 'AMADA于1993-1994年发行，共3弹146张卡片，含30张闪卡、8张银卡、108张普通卡。',
+                    en: 'Released by AMADA (1993-1994), 3 sets with 146 cards including 30 foil, 8 silver, and 108 regular.',
+                    ja: '1993-1994年にAMADAが発売。3弾146枚、ホイル30枚、シルバー8枚、通常108枚。'
                 },
                 totalCards: 146,
                 year: 1993,
-                page: 'slamdunkcard-seriesB.html',
+                page: 'card-gallery.html',
+                series: 'ppcard',
                 image: '../../../images/goods/slamdunk/card/cardseries/1993pp.jpg'
             }
         ];
-        
-        // 多语言文本
+
         const translations = {
             zh: {
-                title: "SLAMDUNK 卡片系列",
-                subtitle: "探索经典的灌篮高手卡片收藏系列",
-                exploreBtn: "探索系列",
-                cardsLabel: "张卡片"
+                'nav-works':'作品','nav-goods':'收藏','nav-about':'关于','nav-guestbook':'留言','lang-label':'语言',
+                'title':'SLAMDUNK 卡片系列','subtitle':'Card Collection Series','back':'← 返回收藏','footer':'© 2024 Inoue Museum'
             },
             en: {
-                title: "SLAMDUNK Card Series",
-                subtitle: "Explore classic SLAMDUNK card collection series",
-                exploreBtn: "Explore Series",
-                cardsLabel: "cards"
+                'nav-works':'Works','nav-goods':'Collection','nav-about':'About','nav-guestbook':'Guestbook','lang-label':'Lang',
+                'title':'SLAMDUNK Card Series','subtitle':'Card Collection Series','back':'← Back','footer':'© 2024 Inoue Museum'
             },
             ja: {
-                title: "SLAMDUNK カードシリーズ",
-                subtitle: "クラシックなスラムダンクカードコレクションシリーズを探索",
-                exploreBtn: "シリーズを探索",
-                cardsLabel: "枚のカード"
+                'nav-works':'作品','nav-goods':'コレクション','nav-about':'紹介','nav-guestbook':'掲示板','lang-label':'言語',
+                'title':'SLAMDUNK カードシリーズ','subtitle':'Card Collection Series','back':'← 戻る','footer':'© 2024 井上博物館'
             }
         };
-        
-        let currentLanguage = 'zh';
-        
-        // 生成系列卡片
-        function generateSeriesCards() {
-            const seriesGrid = document.getElementById('seriesGrid');
-            const t = translations[currentLanguage];
-            
-            let html = '';
-            
-            SERIES_DATA.forEach(series => {
-                const description = series.descriptions[currentLanguage] || series.descriptions.zh;
-                
-                // 生成图片内容
-                let imageContent;
-                if (series.image) {
-                    imageContent = '<img src="' + series.image + '" alt="' + series.titles[currentLanguage] + '" loading="lazy" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';"><div style="display: none; justify-content: center; align-items: center; width: 100%; height: 100%;">🏀</div>';
-                } else {
-                    imageContent = '<div>🏀</div>';
-                }
-                
-                // 生成完整的卡片HTML
-                html += '<div class="series-card" onclick="navigateToSeries(\'' + series.key + '\', \'' + series.page + '\')">';
-                html += '<div class="series-image">' + imageContent + '</div>';
-                html += '<div class="series-content">';
-                html += '<h3 class="series-title">' + series.titles[currentLanguage] + '</h3>';
-                html += '<p class="series-description">' + description.substring(0, 200) + (description.length > 200 ? '...' : '') + '</p>';
-                html += '<div class="series-stats">';
-                html += '<div class="stat-item">';
-                html += '<div class="stat-number">' + series.totalCards + '</div>';
-                html += '<div class="stat-label">' + t.cardsLabel + '</div>';
-                html += '</div>';
-                html += '<div class="stat-item">';
-                html += '<div class="stat-number">' + series.year + '</div>';
-                html += '<div class="stat-label">年份</div>';
-                html += '</div>';
-                html += '</div>';
-                html += '<button class="explore-btn">' + t.exploreBtn + '</button>';
-                html += '</div>';
-                html += '</div>';
-            });
-            
-            seriesGrid.innerHTML = html;
-            console.log('Generated', SERIES_DATA.length, 'series cards');
-        }
-        
-        // 导航到指定系列
-        function navigateToSeries(seriesKey, targetPage) {
-            // 在新标签页打开系列页面
-            console.log('Navigating to series:', seriesKey, targetPage);
-            window.open(`${targetPage}?series=${seriesKey}`, '_blank');
+
+        function render() {
+            const list = document.getElementById('seriesList');
+            list.innerHTML = SERIES_DATA.map(s => `
+                <li class="series-entry" onclick="location.href='${s.page}?series=${s.series}'">
+                    <div class="series-entry-inner">
+                        <div class="series-thumb">
+                            <img src="${s.image}" alt="${s.titles[currentLang]}" loading="lazy">
+                        </div>
+                        <div class="series-info">
+                            <h3>${s.titles[currentLang]}</h3>
+                            <div class="meta">${s.year} &middot; ${s.totalCards} cards</div>
+                            <div class="desc">${s.descriptions[currentLang]}</div>
+                        </div>
+                    </div>
+                </li>
+            `).join('');
         }
 
-        // DOM加载完成后执行
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, generating series cards...');
-
-            try {
-                generateSeriesCards();
-                console.log('Series cards generated successfully');
-            } catch (error) {
-                console.error('Error generating series cards:', error);
-            }
-
-            // 设置初始语言从URL参数
-            const urlParams = new URLSearchParams(window.location.search);
-            const lang = urlParams.get('lang');
-            if (lang && ['zh', 'en', 'ja'].includes(lang)) {
-                switchLanguage(lang);
-            }
-        });
-    </script>
-    <script src="../../../js/navigation.js"></script>
-    <script>
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-
-            // Close dropdown
-            document.querySelector('.language-switcher').classList.remove('active');
-
-            // Update selected state in dropdown
-            document.querySelectorAll('.language-option').forEach(opt => {
-                opt.classList.toggle('selected', opt.dataset.lang === lang);
-            });
-
-            // Update page content
-            const t = translations[lang];
-            document.querySelector('.page-title').textContent = t.title;
-            document.querySelector('.page-subtitle').textContent = t.subtitle;
-
-            // Re-generate series cards
-            generateSeriesCards();
-        }
+        window.addEventListener('langchange', render);
+        document.addEventListener('DOMContentLoaded', render);
     </script>
 </body>
 </html>
