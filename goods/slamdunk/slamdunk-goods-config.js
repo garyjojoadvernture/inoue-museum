@@ -22,7 +22,7 @@ const slamdunkGoodsConfig = {
         },
         {
             key:   "telcard",
-            cover: "../../../images/goods/slamdunk/telcard/10003 (13).jpg",
+            cover: "../../../images/goods/slamdunk/telcard/telcard-cat.jpg",
             link:  "telcard/telcard-gallery.html",
             title: {
                 zh: "电话卡",
@@ -33,7 +33,7 @@ const slamdunkGoodsConfig = {
         },
         {
             key:   "figures",
-            cover: "",
+            cover: "../../../images/goods/slamdunk/figure/figure-cat.jpg",
             link:  "#",
             title: {
                 zh: "手办",
@@ -43,8 +43,8 @@ const slamdunkGoodsConfig = {
             subtitle: "Figures"
         },
         {
-            key:   "jump-magazine",
-            cover: "",
+            key:   "jumpbook",
+            cover: "../../../images/goods/slamdunk/jumpbook/jumpbook-cat.jpg",
             link:  "#",
             title: {
                 zh: "JUMP杂志",
@@ -54,19 +54,19 @@ const slamdunkGoodsConfig = {
             subtitle: "JUMP Magazine"
         },
         {
-            key:   "volumes",
-            cover: "",
+            key:   "calendar",
+            cover: "../../../images/goods/slamdunk/calendar/calendar-cat.jpg",
             link:  "#",
             title: {
-                zh: "单行本",
-                en: "Volumes",
-                ja: "単行本"
+                zh: "日历",
+                en: "Calendar",
+                ja: "カレンダー"
             },
-            subtitle: "Volumes"
+            subtitle: "Calendar"
         },
         {
             key:   "tfsd",
-            cover: "",
+            cover: "../../../images/goods/slamdunk/tfsd/tfsd-cat.jpg",
             link:  "#",
             title: {
                 zh: "TFSD大电影周边",
@@ -77,7 +77,7 @@ const slamdunkGoodsConfig = {
         },
         {
             key:   "jump-goods",
-            cover: "",
+            cover: "../../../images/goods/slamdunk/jumpgoods/jumpgoods-cat.jpg",
             link:  "#",
             title: {
                 zh: "JUMP周边",
@@ -88,12 +88,34 @@ const slamdunkGoodsConfig = {
         },
         {
             key:   "toei",
-            cover: "",
+            cover: "../../../images/goods/slamdunk/toei/toei-cat.jpg",
             link:  "#",
             title: {
                 zh: "东映动画周边",
                 en: "Toei Animation",
                 ja: "東映アニメーション"
+            },
+            subtitle: "Toei Animation"
+        },
+        {
+            key:   "manga",
+            cover: "../../../images/goods/slamdunk/manga/manga-cat.jpg",
+            link:  "#",
+            title: {
+                zh: "漫画单行本",
+                en: "Manga Books",
+                ja: "マンガ"
+            },
+            subtitle: "Toei Animation"
+        },
+        {
+            key:   "shoes",
+            cover: "../../../images/goods/slamdunk/shoes/shoes-cat.jpg",
+            link:  "#",
+            title: {
+                zh: "球鞋",
+                en: "SLAMDUNK Sneakers",
+                ja: "スラムダンクスニーカー"
             },
             subtitle: "Toei Animation"
         }

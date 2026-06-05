@@ -231,13 +231,34 @@
         </div>
     </footer>
 
-    <script src="goods-config.js"></script>
     <script src="../js/navigation.js"></script>
     <script>
+        // Dynamic config loading with cache-bust
+        var configLoaded = false;
+        (function() {
+            var s = document.createElement('script');
+            s.src = 'goods-config.js?v=' + Date.now();
+            s.onload = function() {
+                configLoaded = true;
+                if (document.readyState !== 'loading') {
+                    renderWorks();
+                    renderOthers();
+                }
+            };
+            document.head.appendChild(s);
+        })();
+    </script>
+    <script>
+        function getLang() {
+            var docLang = document.documentElement.lang;
+            var map = { 'zh-CN': 'zh', 'en': 'en', 'ja': 'ja', 'zh': 'zh' };
+            return map[docLang] || window.currentLang || localStorage.getItem('inoue-lang') || 'zh';
+        }
+
         // 渲染作品分类
         function renderWorks() {
             const grid = document.getElementById('worksGrid');
-            const lang = window.currentLang || 'zh';
+            const lang = getLang();
             grid.innerHTML = '';
 
             goodsConfig.works.forEach(function(item) {
@@ -279,7 +300,7 @@
         // 渲染其它分类
         function renderOthers() {
             const grid = document.getElementById('otherGrid');
-            const lang = window.currentLang || 'zh';
+            const lang = getLang();
             grid.innerHTML = '';
 
             goodsConfig.others.forEach(function(item) {
@@ -308,8 +329,10 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            renderWorks();
-            renderOthers();
+            if (configLoaded) {
+                renderWorks();
+                renderOthers();
+            }
         });
 
         // 语言切换时重新渲染

@@ -187,7 +187,29 @@ const telcardConfig = {
                 en: "SLAMDUNK Jump 25th, Weekly Jump, Lottery Prize, Telephone Card",
                 ja: "SLAMDUNK Jump 25th, Weekly Jump テレカ "
             }
+        },{
+            image: "hanamichiweeklyjump1_A.jpg",
+            title: {
+                zh: "樱木花道 Weekly Jump",
+                en: "Sakuragi Hanamichi, Weekly Jump, Lottery Prize, Telephone Card",
+                ja: "樱木花道 Weekly Jump テレカ "
+            }
+        },{
+            image: "桜木花道 少年ジャンプ 抽プレテレカ 1WJ-S0335 未使用.jpg",
+            title: {
+                zh: "樱木花道 Weekly Jump",
+                en: "Sakuragi Hanamichi, Weekly Jump, Lottery Prize, Telephone Card",
+                ja: "樱木花道 Weekly Jump テレカ "
+            }
+        },{
+            image: "桜木花道 少年ジャンプ 抽プレテレカ 1WJ-S0336 未使用.jpg",
+            title: {
+                zh: "樱木花道 Weekly Jump",
+                en: "Sakuragi Hanamichi, Weekly Jump, Lottery Prize, Telephone Card",
+                ja: "樱木花道 Weekly Jump テレカ "
+            }
         }
+
 
     ]
 };
