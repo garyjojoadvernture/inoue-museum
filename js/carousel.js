@@ -68,7 +68,8 @@
             prevBtn.className = 'carousel-arrow carousel-arrow-prev';
             prevBtn.innerHTML = '&#8249;';
             prevBtn.setAttribute('aria-label', 'Previous');
-            prevBtn.addEventListener('click', function () {
+            prevBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
                 goTo(currentIndex - 1);
                 resetAutoplay();
             });
@@ -78,7 +79,8 @@
             nextBtn.className = 'carousel-arrow carousel-arrow-next';
             nextBtn.innerHTML = '&#8250;';
             nextBtn.setAttribute('aria-label', 'Next');
-            nextBtn.addEventListener('click', function () {
+            nextBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
                 goTo(currentIndex + 1);
                 resetAutoplay();
             });
@@ -176,10 +178,25 @@
         });
     }
 
-    // Init
-    document.addEventListener('DOMContentLoaded', function () {
-        buildCarousel();
-    });
+    // Init — poll for config availability (handles async script loading)
+    function tryBuild() {
+        if (typeof carouselConfig !== 'undefined') {
+            buildCarousel();
+        } else {
+            var attempts = 0;
+            var timer = setInterval(function () {
+                attempts++;
+                if (typeof carouselConfig !== 'undefined') {
+                    clearInterval(timer);
+                    buildCarousel();
+                } else if (attempts > 100) {
+                    clearInterval(timer);
+                }
+            }, 50);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', tryBuild);
 
     window.addEventListener('langchange', function () {
         updateCaptions();

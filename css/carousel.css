@@ -31,11 +31,13 @@
     opacity: 0;
     transition: opacity 0.8s ease;
     pointer-events: none;
+    z-index: 0;
 }
 
 .carousel-slide.active {
     opacity: 1;
-    pointer-events: auto;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .carousel-slide a {
@@ -43,6 +45,7 @@
     width: 100%;
     height: 100%;
     text-decoration: none;
+    pointer-events: auto;
 }
 
 .carousel-slide img {
@@ -91,7 +94,8 @@
     font-size: 18px;
     opacity: 0;
     transition: opacity 0.3s ease, background 0.2s ease;
-    z-index: 10;
+    z-index: 100;
+    pointer-events: auto;
     border-radius: 50%;
 }
 
@@ -119,7 +123,8 @@
     transform: translateX(-50%);
     display: flex;
     gap: 8px;
-    z-index: 10;
+    z-index: 100;
+    pointer-events: auto;
 }
 
 .carousel-dot {

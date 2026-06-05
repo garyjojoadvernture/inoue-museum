@@ -152,7 +152,10 @@
         </div>
     </footer>
 
-    <script src="carousel-config.js"></script>
+    <script>
+        // Inject carousel config script with cache-bust, ensure it loads before carousel.js
+        document.write('<script src="carousel-config.js?v=' + Date.now() + '"><\/script>');
+    </script>
     <script src="js/carousel.js"></script>
     <script src="js/navigation.js"></script>
     <script>

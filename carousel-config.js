@@ -13,7 +13,7 @@ const carouselConfig = {
     slides: [
         {
             image: "images/homepage/carousel/1.jpg",
-            link: "work/inouework.html",
+            link: "goods/slamdunk/slamdunkgoods.html",
             title: {
                 zh: "灌篮高手",
                 en: "SLAM DUNK",
@@ -22,38 +22,11 @@ const carouselConfig = {
         },
         {
             image: "images/homepage/carousel/2.jpg",
-            link: "work/inouework.html",
+            link: "goods/slamdunk/telcard/telcard-gallery.html",
             title: {
-                zh: "浪客行",
-                en: "Vagabond",
-                ja: "バガボンド"
-            }
-        },
-        {
-            image: "images/homepage/carousel/3.jpg",
-            link: "work/inouework.html",
-            title: {
-                zh: "REAL",
-                en: "REAL",
-                ja: "リアル"
-            }
-        },
-        {
-            image: "images/homepage/carousel/4.jpg",
-            link: "goods/goods.html",
-            title: {
-                zh: "收藏品",
-                en: "Collection",
-                ja: "コレクション"
-            }
-        },
-        {
-            image: "images/homepage/carousel/5.jpg",
-            link: "about.html",
-            title: {
-                zh: "关于博物馆",
-                en: "About the Museum",
-                ja: "ミュージアムについて"
+                zh: "电话卡",
+                en: "Phone Card",
+                ja: "テレホンカード"
             }
         }
     ]
